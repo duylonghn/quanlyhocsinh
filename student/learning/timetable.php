@@ -2,8 +2,8 @@
 // Include header
 include 'header.php';
 ?>
-<link rel="stylesheet" href="thoikhoabieu.css">
-<script defer src="thoikhoabieu.js"></script>
+<link rel="stylesheet" href="timetable.css">
+<script defer src="timetable.js"></script>
 
 <div class="thoikhoabieu-container">
     <div class="week">

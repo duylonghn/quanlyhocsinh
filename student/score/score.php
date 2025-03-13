@@ -2,8 +2,8 @@
 // Include header
 include 'header.php';
 ?>
-<link rel="stylesheet" href="diem.css">
-<script defer src="diemtichluy.js"></script>
+<link rel="stylesheet" href="score.css">
+<script defer src="score.js"></script>
 
 <div class="container-tichluy">
     <div class="info-sv">

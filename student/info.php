@@ -107,16 +107,6 @@ include 'header.php';
         </div>
     </div>
     <div class="buttons-container">
-        <button class="button-info" id="edit-info">Sửa thông tin</button>
         <button class="button-info" id="change-pass" data-href="/student/change-password/password.php">Đổi mật khẩu</button>
-        <button class="button-info" id="save-info" style="display: none;">Lưu</button>
-        <button class="button-info" id="cancel-info" style="display: none;">Hủy</button>
-    </div>
-    <div id="confirmation-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <p>Bạn có chắc muốn lưu thay đổi không?</p>
-            <button id="confirm-save">Có</button>
-            <button id="cancel-save">Không</button>
-        </div>
     </div>
 </div>

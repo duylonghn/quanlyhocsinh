@@ -88,13 +88,13 @@ span {
 }
 
 /* Định dạng hàng chẵn và lẻ */
-.table-content tbody:nth-child(odd) {
+.table-content tbody tr:nth-child(odd) {
     background-color: #f2f2f2;
 }
-.table-content tbody:nth-child(even) {
+.table-content tbody tr:nth-child(even) {
     background-color: #aec2fe;
 }
-.table-content tbody:hover {
-    background-color: #090084;
+.table-content tbody tr:hover {
+    background-color: #4c43c6;
     color: white;
 }
