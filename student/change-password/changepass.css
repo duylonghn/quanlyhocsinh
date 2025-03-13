@@ -1,0 +1,75 @@
+/* Thiết lập container chính */
+#wrapper {
+    width: 400px;
+    background-color: #E5E5E5;
+    border-radius: 15px;
+    padding: 20px;
+    margin: auto;
+    text-align: center;
+    position: relative;
+    top: 120px;
+}
+/* Tiêu đề Đổi mật khẩu */
+.form-heading {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2555AA;
+    margin-bottom: 10px;
+}
+/* Cấu hình cho các trường input */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+    position: relative;
+}
+.content {
+    color: #2555AA;
+    font-weight: bold;
+    padding: 10px;
+}
+.form-input {
+    width: 95%;
+    padding: 10px;
+    border: 2px solid #2555AA;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+.form-input::placeholder {
+    color: #979494;
+}
+.eye {
+    position: absolute;
+    right: 10px;
+    top: 75%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+.eye i {
+    color: #2555AA;
+}
+/* Định dạng cho các nút */
+.form-row {
+    display: flex;
+    justify-content: space-between;
+}
+button.savePass, button.cancelPass {
+    width: 48%;
+    background-color: #2555AA;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button.cancelPass {
+    background-color: #D9534F;
+}
+button.savePass:hover {
+    background-color: #1B4092;
+}
+button.cancelPass:hover {
+    background-color: #C9302C;
+}

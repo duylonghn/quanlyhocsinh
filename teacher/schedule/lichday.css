@@ -1,0 +1,63 @@
+.h1 {
+    text-align: center;
+    padding: 10px;
+    font-size: 18px;
+}
+.calendar-week {
+    display: flex;
+}
+.lich-day {
+    background: #fff;
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+    border-radius: 10px;
+    width: 100%;
+    margin: 0 10px 0 10px;
+}
+.calendar-week-table {
+    text-align: center;
+    padding: 15px;
+}
+.date-header {
+    width: 100%;
+    border-bottom: solid 1px #2555AA;
+    align-items: center;
+}
+.tiethoc, .buoi {
+    flex: 1;
+}
+.day-of-week:first-child {
+    border-left: 0;
+}
+.buoi {
+    background-color: #2555AA;
+    color: white;
+    width: 100%;
+    padding: 10px 0 10px 0;
+    font-weight: bold;
+}
+.lich {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+.tiet {
+    width: 7%;
+    padding: 10px;
+    border-right: solid 1px #2555AA;
+}
+.row {
+    border-bottom: solid 1px #2555AA;
+    display: flex;
+}
+.cell {
+    padding: 10px;
+    text-align: center;
+    flex: 1;
+}
+.cell.header, .cell.tiethoc {
+    border-left: solid 1px #ddd;
+    border-right: solid 1px #ddd;
+}
+.cell.body, .cell.tiet {
+    border: 1px solid #ddd;
+}

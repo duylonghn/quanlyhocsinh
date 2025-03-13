@@ -1,0 +1,100 @@
+.container-tichluy {
+    width: 100%;
+}
+/*Thông tin sinh viên*/
+.info-sv {
+    width: 100%;
+    height: 30%;
+}
+.row {
+    display: flex;
+}
+.group {
+    background-color: rgb(229, 229, 229);
+    width: 100%;
+    margin: 10px 40px 10px 40px;
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.group label {
+    width: 25%;
+    line-height: 40px;
+    padding: 5px 10px;
+    font-size: 16px;
+    display: block;
+}
+.group select {
+    border: 0;
+    margin: 5px;
+    width: 100%;
+    border-radius: 15px;
+    padding: 10px;
+}
+span {
+    position: relative;
+    top: 32%;
+}
+/*Điểm tổng*/
+.h1-diem {
+    text-align: center;
+    padding: 10px;
+}
+/* Định dạng bảng */
+.table {
+    width: 100%;
+}
+.table-content {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+}
+/* Định dạng tiêu đề bảng */
+.table-content thead {
+    background-color: #2555AA;
+    color: white;
+}
+.table-content th {
+    padding: 10px 0 10px 0;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+/*Định dạng các ô dữ liệu*/
+.table-content td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+/*Kích thước cột*/
+.table-content.diemtong th,
+.table-content.diemtong td {
+    width: 15%;
+}
+
+/*Điểm chi tiết*/
+.table-content.trungbinh th:nth-child(1),
+.table-content.trungbinh td:nth-child(1) {
+    width: 3%; /*STT*/
+}
+.table-content.trungbinh th:nth-child(2), 
+.table-content.trungbinh td:nth-child(2) {
+    width: 10%; /*Tên môn học*/
+}
+.table-content.trungbinh th:nth-child(n+3),
+.table-content.trungbinh td:nth-child(n+3) {
+    width: 5%;
+}
+
+/* Định dạng hàng chẵn và lẻ */
+.table-content tbody:nth-child(odd) {
+    background-color: #f2f2f2;
+}
+.table-content tbody:nth-child(even) {
+    background-color: #aec2fe;
+}
+.table-content tbody:hover {
+    background-color: #090084;
+    color: white;
+}
