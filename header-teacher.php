@@ -20,7 +20,7 @@
             <img class="logo" src="/images/header.png">
         </div>
         <div class="menu">
-            <button class="tab <?php if($current_page == 'roll-call.php') echo 'a'; ?>" data-href="/student/roll-call/roll-call.php">
+            <button class="tab <?php if($current_page == 'roll-call.php') echo 'a'; ?>" data-href="/teacher/roll-call/roll-call.php">
                 <div class="title">Điểm danh</div>
             </button>
             <button class="tab <?php if($current_page == 'class.php') echo 'a'; ?>" data-href="/teacher/class/class.php">

@@ -89,7 +89,7 @@ function fetchSchedule() {
                 const cell = document.getElementById(cellId);
                 if (cell) {
                     const teacherName = entry.teacher ?? "Không có GV"; // Nếu không có, hiển thị mặc định
-                    cell.textContent = `${entry.subject} - ${entry.teacher_name}`;
+                    cell.innerHTML = `${entry.subject}<br>${entry.teacher_name}`;
                     cell.classList.add("has-data");
                 } else {
                     console.warn(`🚨 Không tìm thấy ô: ${cellId}`);

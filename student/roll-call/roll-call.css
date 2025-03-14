@@ -1,0 +1,99 @@
+.roll-call {
+    display: flex;
+    padding: 10px;
+}
+h2 {
+    text-align: center;
+    font-size: 30px;
+}
+.attendance-container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    margin-bottom: 20px;
+    margin-right: 20px;
+    width: 80%;
+}
+.attendance-table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+.attendance-table th,
+.attendance-table td {
+    text-align: center;
+    padding: 10px;
+    border: 1px solid #ddd;
+    word-wrap: break-word;
+}
+
+/* Điều chỉnh độ rộng các cột */
+.attendance-table th:nth-child(1),
+.attendance-table td:nth-child(1) {
+    width: 20%; /* Cột "Thứ" rộng hơn */
+}
+
+.attendance-table th:nth-child(n+2),
+.attendance-table td:nth-child(n+2) {
+    width: 10%; /* Các cột ngày còn lại nhỏ hơn */
+}
+.attendance-table th {
+    background-color: #2555AA;
+    color: white;
+}
+.buoi {
+    background-color: #f0f0f0;
+    font-weight: bold;
+}
+.status-label {
+    background-color: #e9ecef;
+    font-weight: bold;
+}
+
+/*Lịch tháng*/
+.calendar-container {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    display: inline-block;
+    margin-bottom: 20px;
+    height: 100%;
+}
+.choose-day {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+#month-title {
+    font-size: 18px;
+    font-weight: bold;
+}
+.month-calendar {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+.month-calendar th, .month-calendar td {
+    border: 1px solid #ddd;
+    padding: 5px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+.month-calendar th {
+    background-color: #2555AA;
+    color: white;
+}
+.selected-day {
+    background-color: #2555AA;
+    color: white;
+    border-radius: 100%;
+}
+.prev-month, .next-month {
+    color: gray;
+}
