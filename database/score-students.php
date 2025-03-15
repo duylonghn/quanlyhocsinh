@@ -4,8 +4,14 @@ include(__DIR__ . '/../config/config-database.php');
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Lấy user_id từ session (đã kiểm tra đăng nhập ở file khác)
-$user_id = $_SESSION['user_id'];
+// Lấy user_id từ URL thay vì từ session
+$user_id = isset($_GET['id']) ? $_GET['id'] : null;
+
+// Kiểm tra nếu không có id trong URL
+if ($user_id === null) {
+    echo json_encode(["error" => "Thiếu user_id trong URL"], JSON_UNESCAPED_UNICODE);
+    exit;
+}
 
 // Lấy học kỳ từ request (nếu có)
 $semester_id = isset($_GET['semester']) ? $_GET['semester'] : null;

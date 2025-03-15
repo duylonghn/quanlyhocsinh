@@ -1,3 +1,15 @@
+<?php
+session_start(); // Đảm bảo session được khởi động
+// Kiểm tra trạng thái đăng nhập
+if (!isset($_SESSION['user_id'])) {
+    header("Location: /login/login.php");
+    exit(); // Đảm bảo dừng script sau khi điều hướng
+}
+
+$user_id = $_SESSION['user_id'];
+// Lấy URL hiện tại
+$current_page = basename($_SERVER['PHP_SELF']);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,32 +23,31 @@
     <title>Hệ thống thông tin sinh viên</title>
 </head>
 <body>
-    <?php
-    // Lấy URL hiện tại
-    $current_page = basename($_SERVER['PHP_SELF']);
-    ?>
-    <div class="container">
-        <div class="header">
-            <img class="logo" src="/images/header.png">
-        </div>
-        <div class="menu">
-            <button class="tab <?php if($current_page == 'roll-call.php') echo 'a'; ?>" data-href="/teacher/roll-call/roll-call.php">
-                <div class="title">Điểm danh</div>
-            </button>
-            <button class="tab <?php if($current_page == 'class.php') echo 'a'; ?>" data-href="/teacher/class/class.php">
-                <div class="title">Quản lý lớp</div>
-            </button>
-            <button class="tab <?php if($current_page == 'teaching-schedule.php') echo 'a'; ?>" data-href="/teacher/schedule/teaching-schedule.php">
-                <div class="title">Lịch dạy</div>
-            </button>
-            <div class="tab with-drop <?php if($current_page == 'info-teacher.php' || $current_page == 'change-password.php') echo 'a'; ?>">
-                <div class="title">Tài khoản</div>
-                <div class="backdrop">
-                    <div class="dropdown">
-                        <div data-href="/teacher/info-teacher.php" class="tab-child">Thông tin cá nhân</div>
-                        <div id="logout" class="tab-child">Đăng xuất</div>
-                    </div>
+<div class="container">
+    <div class="header">
+        <img class="logo" src="/images/header.png">
+    </div>
+    <div class="menu">
+        <button class="tab <?php if($current_page == 'roll-call.php') echo 'a'; ?>" 
+                data-href="/teacher/roll-call/roll-call.php?id=<?php echo $user_id; ?>">
+            <div class="title">Điểm danh</div>
+        </button>
+        <button class="tab <?php if($current_page == 'class.php') echo 'a'; ?>" 
+                data-href="/teacher/class/class.php?id=<?php echo $user_id; ?>">
+            <div class="title">Quản lý lớp</div>
+        </button>
+        <button class="tab <?php if($current_page == 'teaching-schedule.php') echo 'a'; ?>" 
+                data-href="/teacher/schedule/teaching-schedule.php?id=<?php echo $user_id; ?>">
+            <div class="title">Lịch dạy</div>
+        </button>
+        <div class="tab with-drop <?php if($current_page == 'info-teacher.php' || $current_page == 'change-password.php') echo 'a'; ?>">
+            <div class="title">Tài khoản</div>
+            <div class="backdrop">
+                <div class="dropdown">
+                    <div data-href="/teacher/info-teacher.php?id=<?php echo $user_id; ?>" class="tab-child">Thông tin cá nhân</div>
+                    <div id="logout" class="tab-child">Đăng xuất</div>
                 </div>
             </div>
         </div>
     </div>
+</div>

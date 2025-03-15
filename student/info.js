@@ -7,8 +7,18 @@ document.addEventListener("DOMContentLoaded", function () {
     var confirmSaveButton = document.getElementById('confirm-save');
     var cancelSaveButton = document.getElementById('cancel-save');
 
+    // Lấy id từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const userId = urlParams.get('id'); // Lấy giá trị của tham số "id" từ URL
+
+    // Kiểm tra nếu không có id trong URL
+    if (!userId) {
+        console.error("Lỗi: Không tìm thấy ID trong URL.");
+        return;
+    }
+
     // Lấy thông tin học sinh từ server
-    fetch("/database/info-students.php")
+    fetch(`/database/info-students.php?id=${userId}`)
         .then(response => response.json())
         .then(data => {
             if (data.error) {

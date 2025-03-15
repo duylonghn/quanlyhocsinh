@@ -12,27 +12,27 @@ include 'header-teacher.php';
 <div class="container-gv chunhiem">
     <h2>Lớp chủ nhiệm</h2>
     <table>
-        <tr>
+        <thead>
             <th>Mã lớp</th>
-            <th>ID lớp</th>
+            <th>Tên lớp</th>
             <th>Sỹ số</th>
             <th>Danh sách lớp</th>
             <th>Nhập điểm</th>
-        </tr>
+        </thead>
         <tr>
             <td><?= $homeroom_class['class_id'] ?? '-' ?></td>
             <td><?= $homeroom_class['class_name'] ?? '-' ?></td>
             <td><?= $homeroom_class['student_count'] ?? '-' ?></td>
             <td>
                 <?php if ($homeroom_class): ?>
-                    <a href="student-list.php?class_id=<?= $homeroom_class['id'] ?>">Xem</a>
+                    <a href="/teacher/students-list/students-list.php?class_id=<?= $homeroom_class['id'] ?>">Xem chi tiết</a>
                 <?php else: ?>
                     -
                 <?php endif; ?>
             </td>
             <td>
                 <?php if ($homeroom_class): ?>
-                    <a href="input-score.php?class_id=<?= $homeroom_class['id'] ?>">Nhập điểm</a>
+                    <a href="/teacher/input-score/input-score.php?class_id=<?= $homeroom_class['id'] ?>">Nhập điểm</a>
                 <?php else: ?>
                     -
                 <?php endif; ?>
@@ -44,14 +44,14 @@ include 'header-teacher.php';
 <div class="container-gv bomon">
     <h2>Lớp bộ môn</h2>
     <table>
-        <tr>
+        <thead>
             <th>Mã lớp</th>
-            <th>ID lớp</th>
+            <th>Tên lớp</th>
             <th>Sỹ số</th>
             <th>Môn phụ trách</th>
             <th>Danh sách lớp</th>
             <th>Nhập điểm</th>
-        </tr>
+        </thead>
         <?php if (!empty($subject_classes)): ?>
             <?php foreach ($subject_classes as $class): ?>
                 <tr>
@@ -59,8 +59,8 @@ include 'header-teacher.php';
                     <td><?= $class['class_name'] ?? '-' ?></td>
                     <td><?= $class['student_count'] ?? '-' ?></td>
                     <td><?= $class['subject_name'] ?? '-' ?></td>
-                    <td><a href="student-list.php?class_id=<?= $class['id'] ?>">Xem</a></td>
-                    <td><a href="input-score.php?class_id=<?= $class['id'] ?>">Nhập điểm</a></td>
+                    <td><a href="/teacher/input-score/student-list.php?class_id=<?= $class['id'] ?>">Xem chi tiết</a></td>
+                    <td><a href="/teacher/input-score/input-score.php?class_id=<?= $class['id'] ?>">Nhập điểm</a></td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>

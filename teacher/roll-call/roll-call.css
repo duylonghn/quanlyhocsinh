@@ -1,0 +1,39 @@
+h1 {
+    text-align: center;
+    padding: 10px;
+    font-size: 25px;
+}
+
+h2 {
+    text-align: center;
+    padding: 10px;
+    font-size: 20px;
+}
+
+.container-gv {
+    background: #fff;
+    box-shadow: 0 0 10px rgb(0 0 0 / 10%);
+    border-radius: 10px;
+    width: 97%;
+    margin: 0 10px 0 10px;
+    padding: 0 10px 1px 10px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    table-layout: fixed; /* Đặt table-layout là fixed để chia đều các cột */
+}
+
+th, td {
+    border: 1px solid #000000;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Định dạng tiêu đề các cột */
+th {
+    background-color: #2555AA;
+    color: #ffffff;
+}

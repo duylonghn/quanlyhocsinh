@@ -79,11 +79,13 @@ h2 {
     text-align: center;
 }
 .month-calendar th, .month-calendar td {
-    border: 1px solid #ddd;
     padding: 5px;
     width: 30px;
     height: 30px;
     cursor: pointer;
+}
+.month-calendar th {
+    border: 1px solid #ddd;
 }
 .month-calendar th {
     background-color: #2555AA;

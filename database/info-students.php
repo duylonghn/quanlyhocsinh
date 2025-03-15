@@ -5,13 +5,13 @@ include(__DIR__ . '/../config/config-database.php'); // Kết nối database
 // Thiết lập header để trả về JSON
 header('Content-Type: application/json; charset=utf-8');
 
-// Kiểm tra nếu chưa đăng nhập
-if (!isset($_SESSION['user_id'])) {
-    echo json_encode(["error" => "Chưa đăng nhập"]);
+// Lấy `id` từ URL
+$student_id = isset($_GET['id']) ? intval($_GET['id']) : 0;
+
+if ($student_id <= 0) {
+    echo json_encode(["error" => "ID không hợp lệ"]);
     exit;
 }
-
-$user_id = $_SESSION['user_id'];
 
 // Lấy thông tin học sinh + thông tin phụ huynh trong cùng một truy vấn
 $sql = "SELECT 
@@ -32,7 +32,7 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("s", $user_id);
+$stmt->bind_param("i", $student_id);
 $stmt->execute();
 $result = $stmt->get_result();
 

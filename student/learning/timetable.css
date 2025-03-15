@@ -1,7 +1,32 @@
 .h1 {
     text-align: center;
     padding: 10px;
-    font-size: 18px;
+    font-size: 30px;
+    font-weight: bold;
+}
+.group {
+    background-color: rgb(229, 229, 229);
+    width: 20%;
+    margin: 10px 40px 10px 40px;
+    border-radius: 20px;
+    display: flex;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.group label {
+    width: 25%;
+    line-height: 40px;
+    padding: 5px 10px;
+    font-size: 16px;
+    display: block;
+}
+.group select {
+    border: 0;
+    margin: 5px;
+    width: 100%;
+    border-radius: 15px;
+    padding: 10px;
 }
 .calendar-week {
     display: flex;

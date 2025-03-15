@@ -56,9 +56,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Điều hướng theo role
             if ($user['role'] == 'student') {
-                header("Location: /../../student/info.php");
+                header("Location: /../../student/info.php?id=" . urlencode($user['id']));
             } elseif ($user['role'] == 'teacher') {
-                header("Location: /../../teacher/info-teacher.php");
+                header("Location: /../../teacher/info-teacher.php?id=" . urlencode($user['id']));
             } else {
                 header("Location: login.php?error=invalid_role");
             }

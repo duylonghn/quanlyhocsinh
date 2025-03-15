@@ -1,18 +1,22 @@
 document.addEventListener("DOMContentLoaded", function () {
     const semesterSelect = document.getElementById("semester");
 
+    // Lấy studentId từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const studentId = urlParams.get('id'); // Lấy giá trị tham số 'id' từ URL
+
     // Gọi dữ liệu lần đầu (học kỳ đầu tiên trong danh sách)
-    fetchData();
+    fetchData(studentId);
 
     // Lắng nghe sự kiện thay đổi học kỳ
     semesterSelect.addEventListener("change", function () {
-        fetchData(this.value);
+        fetchData(studentId, this.value);
     });
 
-    function fetchData(semesterId = null) {
-        let url = "/database/data-score.php";
+    function fetchData(studentId, semesterId = null) {
+        let url = `/database/score-students.php?id=${studentId}`; // Thêm studentId vào URL
         if (semesterId) {
-            url += `?semester=${semesterId}`;
+            url += `&semester=${semesterId}`; // Nếu có semester, thêm vào URL
         }
 
         fetch(url)

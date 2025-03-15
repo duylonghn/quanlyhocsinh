@@ -22,7 +22,7 @@
     </div>
     <div class="login-container">
         <div class="login-title">Đăng nhập</div>
-        <form action="act-login.php" method="POST">
+        <form action="/action/act-login.php" method="POST">
         <div class="form-group">
             <label class="title">ID người dùng:</label>
             <div class="input-container">

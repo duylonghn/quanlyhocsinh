@@ -32,7 +32,7 @@ function logout() {
         .then(response => response.json())
         .then(data => {
             if (data.status === "success") {
-                window.location.href = "/action/login.php"; // Chuyển về trang đăng nhập
+                window.location.href = "/login/login.php"; // Chuyển về trang đăng nhập
             } else {
                 alert("Đăng xuất thất bại!"); // Thông báo nếu có lỗi
             }
@@ -42,3 +42,4 @@ function logout() {
 
 // Thêm sự kiện click cho toàn bộ menu
 document.querySelector('.dropdown').addEventListener('click', handleMenuClick);
+

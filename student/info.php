@@ -107,6 +107,6 @@ include 'header.php';
         </div>
     </div>
     <div class="buttons-container">
-        <button class="button-info" id="change-pass" data-href="/student/change-password/password.php">Đổi mật khẩu</button>
+        <button class="button-info" id="change-pass" data-href="/action/change-password/password.php">Đổi mật khẩu</button>
     </div>
 </div>

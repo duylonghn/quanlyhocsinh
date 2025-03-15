@@ -1,5 +1,5 @@
 <?php
     // Lệnh điều hướng tới /student/info
-    header("Location: /../action/login.php");
+    header("Location: /../login/login.php");
     exit();
 ?>

@@ -8,6 +8,12 @@ include 'header.php';
 <div class="thoikhoabieu-container">
     <div class="week">
         <div class="h1 week">Thời khóa biểu</div>
+        <div class="group">
+                <label for="semester">Học kỳ:</label>
+                <select id="semester">Chọn học kỳ
+                    <option value="">Chọn học kỳ</option>
+                </select>
+            </div>
         <div class="calendar-week">
             <div class="lich-hoc">
                 <div class="calendar-week-table">

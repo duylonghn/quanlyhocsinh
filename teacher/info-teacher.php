@@ -33,7 +33,7 @@ include 'header-teacher.php';
                 </div>
             </div>
             <div class="buttons-container">
-                <button class="button-info" id="change-pass" data-href="change-password.php">Đổi mật khẩu</button>
+                <button class="button-info" id="change-pass" data-href="/action/change-password/password.php">Đổi mật khẩu</button>
                 <button class="button-info" id="edit-info">Chỉnh sửa thông tin</button>
                 <button class="button-info" id="save-info" style="display: none;">Lưu</button>
                 <button class="button-info" id="cancel-info" style="display: none;">Hủy</button>

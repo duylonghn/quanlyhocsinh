@@ -1,23 +1,55 @@
-const periods = ["Tiết 1", "Tiết 2", "Tiết 3", "Tiết 4", "Tiết 5", "Tiết 6", "Tiết 7", "Tiết 8", "Tiết 9", "Tiết 10"];
-const daysOfWeek = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"];
+// Hàm lấy ID từ URL
+function getTeacherIdFromURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get("id");
+}
 
-// Tạo nội dung cho header và lịch học
-function createSchedule() {
+// Hàm lấy dữ liệu kỳ học từ API
+async function fetchSemesters() {
+    try {
+        const response = await fetch('/database/get-semester.php');
+        if (!response.ok) throw new Error(`Lỗi HTTP! Mã: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Không thể lấy dữ liệu kỳ học:', error);
+        return [];
+    }
+}
+
+// Hàm lấy dữ liệu lịch dạy từ API
+async function fetchSchedule(teacherId, semesterId) {
+    try {
+        const response = await fetch(`/database/timetable-teacher.php?teacher_id=${teacherId}&semester_id=${semesterId}`);
+        if (!response.ok) throw new Error(`Lỗi HTTP! Mã: ${response.status}`);
+        return await response.json();
+    } catch (error) {
+        console.error('Không thể lấy dữ liệu lịch dạy:', error);
+        return {};
+    }
+}
+
+// Hàm tạo bảng lịch dạy
+async function createSchedule(teacherId, semesterId) {
+    const scheduleData = await fetchSchedule(teacherId, semesterId);
+
     const dateHeader = document.getElementById('date-header');
     const sangContainer = document.getElementById('sang');
     const chieuContainer = document.getElementById('chieu');
+
+    dateHeader.innerHTML = '';
+    sangContainer.innerHTML = '';
+    chieuContainer.innerHTML = '';
 
     // Tạo tiêu đề ngày trong tuần
     const headerRow = document.createElement('div');
     headerRow.classList.add('row');
 
-    // Tạo ô tiêu đề cho tiết học
     const periodHeaderCell = document.createElement('div');
     periodHeaderCell.classList.add('cell', 'tiethoc');
     periodHeaderCell.textContent = 'Tiết học';
     headerRow.appendChild(periodHeaderCell);
 
-    // Tạo các ô tiêu đề ngày trong tuần
+    const daysOfWeek = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7"];
     daysOfWeek.forEach(day => {
         const dayHeaderCell = document.createElement('div');
         dayHeaderCell.classList.add('cell', 'header');
@@ -25,43 +57,104 @@ function createSchedule() {
         headerRow.appendChild(dayHeaderCell);
     });
 
-    // Thêm hàng tiêu đề vào date-header
     dateHeader.appendChild(headerRow);
 
-    // Tạo các hàng cho tiết học
+    // Tạo từng hàng cho mỗi tiết
+    const periods = ["Tiết 1", "Tiết 2", "Tiết 3", "Tiết 4", "Tiết 5", "Tiết 6", "Tiết 7", "Tiết 8", "Tiết 9", "Tiết 10"];
+    
     periods.forEach((period, index) => {
-        // Tạo hàng cho tiết học
         const periodRow = document.createElement('div');
         periodRow.classList.add('row');
 
-        // Thêm ô cho tiết học
         const periodCell = document.createElement('div');
         periodCell.classList.add('cell', 'tiet');
         periodCell.textContent = period;
         periodRow.appendChild(periodCell);
 
-        // Thêm các ô cho từng ngày trong tuần cho Buổi sáng và Buổi chiều
-        daysOfWeek.forEach((day, dayIndex) => {
+        daysOfWeek.forEach((_, dayIndex) => {
             const cell = document.createElement('div');
             cell.classList.add('cell', 'body');
-            
-            // Tạo ID cho từng ô theo định dạng period-day
-            const periodNumber = index + 1; // Tiết từ 1 đến 10
-            const sessionNumber = dayIndex + 1; // Ngày trong tuần từ 1 đến 7
-            cell.id = `period${periodNumber}-day${sessionNumber}`;
+            cell.id = `period${index + 1}-day${dayIndex + 1}`;
+
+            const subjectSpan = document.createElement('div');
+            subjectSpan.classList.add('subject');
+
+            const classSpan = document.createElement('div');
+            classSpan.classList.add('class-id');
+
+            cell.appendChild(subjectSpan);
+            cell.appendChild(classSpan);
 
             periodRow.appendChild(cell);
         });
 
-        // Thêm hàng vào các container
-        // Lưu ý: chia tiết học thành buổi sáng và chiều
-        if (index < 5) { // Tiết 1-5 cho buổi sáng
-            sangContainer.appendChild(periodRow.cloneNode(true));
-        } else { // Tiết 6-10 cho buổi chiều
-            chieuContainer.appendChild(periodRow.cloneNode(true));
+        (index < 5 ? sangContainer : chieuContainer).appendChild(periodRow);
+    });
+
+    // Đổ dữ liệu vào bảng từ API
+    Object.entries(scheduleData).forEach(([key, entry]) => {
+        const cell = document.getElementById(key);
+        if (cell) {
+            cell.querySelector('.subject').textContent = entry.subject;
+            cell.querySelector('.class-id').textContent = entry.class;
         }
     });
 }
 
-// Gọi hàm để tạo lịch học
-createSchedule();
+// Hàm tính toán và trả về semester_id
+function getSemesterId() {
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth() + 1; // Tháng hiện tại (1-12)
+    const currentYear = currentDate.getFullYear(); // Năm hiện tại
+    const lastTwoDigitsCurrentYear = currentYear.toString().slice(-2); // 2 chữ số cuối của năm hiện tại
+    const lastTwoDigitsNextYear = (currentYear + 1).toString().slice(-2); // 2 chữ số cuối của năm tiếp theo
+
+    if (currentMonth >= 8 && currentMonth <= 12) {
+        // Kỳ 1, năm hiện tại và năm tiếp theo
+        return `1_${lastTwoDigitsCurrentYear}_${lastTwoDigitsNextYear}`;
+    } else {
+        // Kỳ 2, năm trước và năm hiện tại
+        const lastTwoDigitsPreviousYear = (currentYear - 1).toString().slice(-2); // 2 chữ số cuối của năm trước
+        return `2_${lastTwoDigitsPreviousYear}_${lastTwoDigitsCurrentYear}`;
+    }
+}
+
+// Hàm hiển thị danh sách kỳ học lên select
+async function displaySemesters() {
+    const semesterSelect = document.getElementById('semester');
+    const semesters = await fetchSemesters();
+
+    if (semesters.length > 0) {
+        semesters.forEach(semester => {
+            const option = document.createElement('option');
+            option.value = semester.id;
+            option.textContent = semester.name;
+            semesterSelect.appendChild(option);
+        });
+
+        // Tự động chọn kỳ học mặc định
+        const defaultSemesterId = getSemesterId();
+        semesterSelect.value = defaultSemesterId;
+        console.log('Default semester ID:', defaultSemesterId);
+
+        // Tải thời khóa biểu cho kỳ học mặc định
+        const teacherId = getTeacherIdFromURL();
+        createSchedule(teacherId, defaultSemesterId);
+    } else {
+        console.error('Không có dữ liệu kỳ học');
+    }
+}
+
+// Lắng nghe sự kiện thay đổi kỳ học
+document.getElementById('semester').addEventListener('change', async function () {
+    const semesterId = this.value;
+    console.log('Chọn kỳ học:', semesterId);
+
+    const teacherId = getTeacherIdFromURL();
+    if (teacherId) {
+        await createSchedule(teacherId, semesterId);
+    }
+});
+
+// Gọi hàm hiển thị kỳ học và tạo lịch khi trang tải xong
+document.addEventListener("DOMContentLoaded", displaySemesters);
