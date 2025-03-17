@@ -1,5 +1,5 @@
 <?php 
-include __DIR__ . '/../header.php';
+include __DIR__ . '/../../header.php';
 ?>
 <link rel="stylesheet" href="roll-call.css">
 <script defer src="roll-call.js"></script>

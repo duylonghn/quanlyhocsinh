@@ -1,6 +1,6 @@
 <?php
 // Include header
-include __DIR__ . 'header-teacher.php';
+include __DIR__ . '/../../header-teacher.php';
 ?>
 <link rel="stylesheet" href="info.css">
 <script defer src="info.js"></script>
