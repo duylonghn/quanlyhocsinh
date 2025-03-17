@@ -1,6 +1,7 @@
 <?php
 // Include header
-include 'header.php';
+include __DIR__ . '/../header.php';
+
 ?>
 <link rel="stylesheet" href="timetable.css">
 <script defer src="timetable.js"></script>

@@ -1,6 +1,6 @@
 <?php
 // Include header
-include 'header-teacher.php';
+include __DIR__ . 'header-teacher.php';
 ?>
 <link rel="stylesheet" href="lichday.css">
 <script defer src="lichday.js"></script>

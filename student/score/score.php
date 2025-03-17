@@ -1,6 +1,7 @@
 <?php
 // Include header
-include 'header.php';
+include __DIR__ . '/../header.php';
+;
 ?>
 <link rel="stylesheet" href="score.css">
 <script defer src="score.js"></script>

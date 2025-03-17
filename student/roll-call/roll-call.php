@@ -1,4 +1,6 @@
-<?php include 'header.php'; ?>
+<?php 
+include __DIR__ . '/../header.php';
+?>
 <link rel="stylesheet" href="roll-call.css">
 <script defer src="roll-call.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.css">
