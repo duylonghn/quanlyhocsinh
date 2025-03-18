@@ -1,5 +1,5 @@
 <?php
-$servername = "192.168.11.139";
+$servername = "localhost";
 $username = "admin";
 $password = "123456";
 $dbname = "student_management"; // Đổi đúng tên database
