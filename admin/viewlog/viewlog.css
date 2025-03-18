@@ -1,0 +1,84 @@
+.container-viewlog {
+    width: 100%;
+}
+/*Thông tin sinh viên*/
+.input-info {
+    width: 100%;
+}
+
+.group {
+    background-color: #2555AA;
+    width: 30%;
+    margin: 10px 40px;
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    padding: 5px 10px;
+}
+
+.group label {
+    width: 30%;
+    line-height: 40px;
+    font-size: 16px;
+    color: white;
+}
+
+input {
+    width: 70%;
+    margin: 5px 10px;
+    padding: 5px;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/*Điểm tổng*/
+.h1-log {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+/* Định dạng bảng */
+.table {
+    width: 100%;
+}
+.table-content {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    text-align: center;
+}
+/* Định dạng tiêu đề bảng */
+.table-content thead {
+    background-color: #2555AA;
+    color: white;
+}
+.table-content th {
+    padding: 10px 0 10px 0;
+    text-align: center;
+    border: 1px solid #ddd;
+}
+/*Định dạng các ô dữ liệu*/
+.table-content td {
+    padding: 8px;
+    border: 1px solid #ddd;
+}
+/*Kích thước cột*/
+.table-content th:nth-child(1),
+.table-content td:nth-child(1),
+.table-content th:nth-child(3),
+.table-content td:nth-child(3),
+.table-content th:nth-child(5),
+.table-content td:nth-child(5),
+.table-content th:nth-child(6),
+.table-content td:nth-child(6) {
+    width: 10%;
+}
+.table-content th:nth-child(2),
+.table-content td:nth-child(2),
+.table-content th:nth-child(4),
+.table-content td:nth-child(4) {
+    width: 15%;
+}

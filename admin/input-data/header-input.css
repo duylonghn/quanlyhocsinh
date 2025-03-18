@@ -1,0 +1,42 @@
+.container-inputdata {
+    width: 100%;
+    color: rgb(0, 0, 0);
+    font-weight: bold;
+}
+
+.header-input {
+    display: flex;
+    position: relative;
+    background-color: #2555AA; /* Màu nền xanh */
+    overflow: hidden;
+}
+
+.menuinput {
+    flex: 1; /* Các menu chia đều */
+    text-align: center;
+    padding: 10px 15px;
+    font-size: 16px;
+    color: white; /* Chữ trắng */
+    background-color: #2555AA; /* Nền xanh */
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    border-right: 1px solid white; /* Thêm viền trắng giữa các menu */
+}
+
+.menuinput:last-child {
+    border-right: none; /* Bỏ viền cho ô cuối */
+}
+
+/* Hiệu ứng khi di chuột vào */
+.menuinput:hover {
+    background-color: white;
+    color: #2555AA;
+}
+.b {
+    background-color: #ffffff;
+    color: #2555AA;
+}
+
+h1 {
+    text-align: center;
+}

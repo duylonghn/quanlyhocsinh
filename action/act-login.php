@@ -59,6 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: /../../student/info.php?id=" . urlencode($user['id']));
             } elseif ($user['role'] == 'teacher') {
                 header("Location: /../../teacher/info-teacher.php?id=" . urlencode($user['id']));
+            } elseif ($user['role'] == 'admin') {
+                header("Location: /../../admin/admin.php?id=" . urlencode($user['id']));
             } else {
                 header("Location: login.php?error=invalid_role");
             }

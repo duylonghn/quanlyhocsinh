@@ -1,6 +1,6 @@
 <?php
 // Include header
-include __DIR__ . 'header-teacher.php';
+include __DIR__ . '/../../header-teacher.php';
 ?>
 <link rel="stylesheet" href="roll-call.css">
 <script defer src="roll-call.js"></script>

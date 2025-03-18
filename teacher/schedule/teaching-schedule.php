@@ -17,9 +17,7 @@ include __DIR__ . '/../../header-teacher.php';
         <div class="calendar-week">
             <div class="lich-day">
                 <div class="calendar-week-table">
-                    <div class="date-header" id="date-header">
-                        
-                    </div>
+                    <div class="date-header" id="date-header"></div>
                     <div class="buoi">Buổi sáng</div>
                     <div class="lich sang" id="sang"></div>
                     <div class="buoi">Buổi chiều</div>
