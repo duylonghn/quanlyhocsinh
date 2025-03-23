@@ -1,0 +1,173 @@
+body {
+    background-color: #EBEBEB;
+    font-size: 16px;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+.h1 {
+    text-align: center;
+    padding-top: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+.form-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+.left-column, .right-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.left-column {
+    width: 40%;
+}
+.right-column {
+    width: 60%;
+}
+.form {
+    background-color: white;
+    border-radius: 20px;
+    box-sizing: border-box;
+    padding: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    
+}
+.form.student, .form.parents {
+    width: 100%;
+}
+.form.personal, .form.course {
+    width: 100%;
+}
+.form-row {
+    flex-direction: column;
+    gap: 10px;
+}
+.form-group {
+    display: flex;
+    align-items: center;
+    border-top: solid 1px #EBEBEB;
+    padding: 10px;
+    box-sizing: border-box;
+}
+.title-info {
+    text-align: center;
+    padding: 15px;
+    font-size: 1.2em;
+}
+.form-group label {
+    width: 30%;
+    margin-right: 10px;
+}
+.form-group span {
+    width: 70%;
+    padding: 10px;
+    border: 0;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 1em;
+    color: #6a6a6a;
+}
+.form-group span {
+    cursor: not-allowed;
+}
+.buttons-container {
+    margin-top: 20px;
+    padding: 10px;
+    justify-content: space-around;
+    position: absolute;
+    bottom: -220px;
+    left: 200px;
+}
+
+.buttons-container {
+    margin-top: 20px;
+    padding: 10px;
+    justify-content: space-around;
+    position: absolute;
+    bottom: -220px;
+    left: 200px;
+}
+.button-info {
+    padding: 10px 20px;
+    background-color: #ffffff;
+    border: solid 2px #2555AA;
+    color: #2555AA;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.button-info:hover {
+    background-color: #2555AA;
+    color: white;
+}
+/* Responsive Design for Mobile */
+@media screen and (max-width: 480px) {
+    .h1 {
+        padding-top: 5px;
+        font-size: 15px;
+    }
+    .form-container {
+        gap: 10px;
+        padding: 10px;
+    }
+    .left-column, .right-column {
+        gap: 10px;
+    }
+    .left-column {
+        width: 42%;
+    }
+    .right-column {
+        width: 55%;
+    }
+    .form {
+        background-color: white;
+        border-radius: 20px;
+        box-sizing: border-box;
+        padding: 0px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        height: 100%;
+        width: 100%;
+    }
+    .form-row {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .form-group {
+        padding: 5px;
+    }
+    .form-group.student {
+        padding: 5px;
+    }
+    .form-group.student:last-child {
+        border-bottom: solid 1px #EBEBEB;
+    }
+    .title-info {
+        padding: 8px;
+        font-size: 14px;
+    }
+    .form-group label {
+        width: 40%;
+        margin-right: 0px;
+        font-size: 15px;
+    }
+    .form-group input[type="text"], .form-group span {
+        width: 70%;
+        padding: 0px;
+        font-size: 15px;
+    }
+    .form-group span {
+        white-space: nowrap;
+        overflow: hidden;
+    }
+    .form-group span:hover {
+        overflow: visible;
+    }    
+    .buttons-container {
+        bottom: 360px;
+        left: 130px;
+    }
+}

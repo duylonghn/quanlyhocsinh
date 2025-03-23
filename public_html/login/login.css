@@ -1,0 +1,175 @@
+/* Thiết lập bảng header */
+table.header {
+    width: 100%;
+    height: 12vh; /* Sử dụng đơn vị tương đối */
+    border-collapse: collapse;
+}
+
+/* Động cơ chia đều hai bên */
+table.header td {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 22px;
+    color: #2555AA;
+    border-bottom: solid 2px #2555AA;
+}
+
+/* Định dạng vùng hình ảnh logo */
+table.header .logo {
+    max-width: 100%;
+    max-height: 10vh; /* Sử dụng đơn vị tương đối */
+    display: block;
+    margin: 0 auto;
+    width: auto; /* Thay đổi kích thước tùy theo nội dung */
+    height: auto; /* Thay đổi kích thước tùy theo nội dung */
+}
+/* Thiết lập container chính */
+.login-container {
+    width: 400px;
+    background-color: #E5E5E5;
+    border-radius: 15px;
+    padding: 20px;
+    margin: auto;
+    text-align: center;
+    position: relative;
+    top: 120px;
+}
+/* Tiêu đề Đăng nhập */
+.login-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #2555AA;
+    margin-bottom: 20px;
+}
+/* Cấu hình cho các trường input */
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.title {
+    font-weight: bold;
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #2555AA;
+}
+.input-container {
+    position: relative;
+}
+.form-input {
+    width: 95%;
+    padding: 10px;
+    border: 2px solid #2555AA;
+    border-radius: 5px;
+    font-size: 14px;
+    color: #333;
+    outline: none;
+}
+.form-input::placeholder {
+    color: #979494;
+}
+/* Icon mắt để hiện/ẩn mật khẩu */
+#eye {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+}
+#eye i {
+    color: #2555AA;
+}
+/* Định dạng cho quên mật khẩu */
+.forgot-password, .back {
+    margin-bottom: 20px;
+    text-align: left;
+}
+.forgot-password a, .back a {
+    font-size: 14px;
+    color: #2555AA;
+    text-decoration: none;
+}
+/* Nút đăng nhập */
+.login-button, .send-email {
+    width: 100%;
+    background-color: #2555AA;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.login-button:hover, .send-email:hover {
+    background-color: #1B4092;
+}
+
+/* Responsive Design for Mobile */
+@media screen and (max-width: 480px) {
+    /* Thiết lập bảng header */
+    table.header {
+        height: 10vh; /* Sử dụng đơn vị tương đối */
+    }
+
+    /* Động cơ chia đều hai bên */
+    table.header td {
+        font-size: 13px;
+    }
+
+    /* Định dạng vùng hình ảnh logo */
+    table.header .logo {
+        max-width: 200px;
+        height: 40px; /* Thay đổi kích thước tùy theo nội dung */
+    }
+    /* Thiết lập container chính */
+    .login-container {
+        width: 190px;
+        top: 20%;
+    }
+    /* Tiêu đề Đăng nhập */
+    .login-title {
+        font-size: 18px;
+    }
+    /* Cấu hình cho các trường input */
+    .title {
+        font-size: 16px;
+    }
+    .form-group {
+        margin-bottom: 10px;
+    }
+    .input-container {
+        width: 200px;
+    }
+    .form-input {
+        width: 90%;
+        padding: 5px;
+        font-size: 12px;
+    }
+    /* Icon mắt để hiện/ẩn mật khẩu */
+    #eye {
+        right: 15px;
+        top: 51%;
+    }
+    /* Định dạng cho quên mật khẩu */
+    .forgot-password, .back {
+        margin-bottom: 5px;
+    }
+    .forgot-password a, .back a {
+        font-size: 14px;
+        color: #2555AA;
+        text-decoration: none;
+    }
+    /* Nút đăng nhập */
+    .login-button, .send-email {
+        width: 100%;
+        background-color: #2555AA;
+        color: white;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+    .login-button:hover, .send-email:hover {
+        background-color: #1B4092;
+    }
+}
