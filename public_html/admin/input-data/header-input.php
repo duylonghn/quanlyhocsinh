@@ -9,8 +9,6 @@ if (basename($_SERVER['PHP_SELF']) == 'header-input.php') {
     exit();
 }
 ?>
-<link rel="stylesheet" href="header-input.css">
-<script defer src="header-input.js"></script>
 
 <div class="container-inputdata">
     <div class="header-input">

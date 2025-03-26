@@ -95,7 +95,7 @@
 .cell.body, .cell.tiet {
     border: 1px solid #ddd;
 }
-.teacher-input, .subject-input {
+.teacher-input, .subject-input, .teacher-id-input {
     border: 1px dashed #ccc;
     padding: 5px;
 }

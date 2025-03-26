@@ -10,22 +10,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 return;
             }
 
-            const teacherId = sessionData.user_id; // Lấy teacher_id từ session
+            const teacherId = sessionData.user_id;
 
             // Gọi API lấy thông tin giáo viên
             fetch(`/database/info-teacher.php?teacher_id=${teacherId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error(`Lỗi HTTP: ${response.status}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.error) {
                         alert(data.error);
                     } else {
-                        // Lưu dữ liệu gốc để có thể hoàn tác khi hủy chỉnh sửa
-                        originalData = { ...data };
+                        originalData = { ...data, teacher_id: teacherId }; // Lưu cả teacher_id
 
                         // Điền dữ liệu vào HTML
                         document.getElementById("fullname").textContent = data.fullname || "N/A";
@@ -43,13 +37,10 @@ document.addEventListener("DOMContentLoaded", function () {
                         setInputValue("birthplace", data.birthplace);
                         setInputValue("address", data.address);
 
-                        // Mặc định khóa input
                         setInputState(true);
                     }
-                })
-                .catch(error => console.error("❌ Lỗi khi lấy dữ liệu giáo viên:", error));
-        })
-        .catch(() => console.error("❌ Lỗi khi lấy teacher_id từ session."));
+                });
+        });
 
     // Các nút điều khiển
     const editBtn = document.getElementById("edit-info");
@@ -57,16 +48,14 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelBtn = document.getElementById("cancel-info");
     const changePassBtn = document.getElementById("change-pass");
 
-    // ✏ Sự kiện khi nhấn "Chỉnh sửa thông tin"
     editBtn.addEventListener("click", function () {
-        setInputState(false); // Mở khóa input để chỉnh sửa
-        toggleButtons(false); // Ẩn nút "Chỉnh sửa", hiện nút "Lưu" & "Hủy"
+        setInputState(false);
+        toggleButtons(false);
     });
 
-    // 💾 Sự kiện khi nhấn "Lưu"
     saveBtn.addEventListener("click", function () {
         const updatedData = {
-            teacher_id: originalData.id, // ID không đổi
+            teacher_id: originalData.teacher_id,
             phone: getInputValue("phone"),
             email: getInputValue("email"),
             cccd: getInputValue("CCCD"),
@@ -76,8 +65,17 @@ document.addEventListener("DOMContentLoaded", function () {
             address: getInputValue("address")
         };
 
-        // Gửi dữ liệu lên server
-        fetch("/action/update-teacher.php", {
+        if (!updatedData.teacher_id || updatedData.teacher_id <= 0) {
+            alert("❌ Lỗi: ID giáo viên không hợp lệ!");
+            return;
+        }
+
+        if (!isDataChanged(updatedData, originalData)) {
+            alert("⚠ Không có thay đổi nào trong thông tin!");
+            return;
+        }
+
+        fetch("/action/update-info/update-info-teacher.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(updatedData)
@@ -85,20 +83,17 @@ document.addEventListener("DOMContentLoaded", function () {
         .then(response => response.json())
         .then(result => {
             if (result.success) {
-                alert("Cập nhật thông tin thành công!");
-                originalData = { ...updatedData }; // Cập nhật dữ liệu gốc mới
-                setInputState(true); // Khóa input lại
-                toggleButtons(true); // Hiển thị lại nút "Chỉnh sửa"
+                alert("✅ Cập nhật thông tin thành công!");
+                originalData = { ...updatedData, teacher_id: originalData.teacher_id };
+                setInputState(true);
+                toggleButtons(true);
             } else {
                 alert("❌ Lỗi khi cập nhật: " + result.error);
             }
-        })
-        .catch(error => console.error("❌ Lỗi khi cập nhật thông tin:", error));
+        });
     });
 
-    // ❌ Sự kiện khi nhấn "Hủy"
     cancelBtn.addEventListener("click", function () {
-        // Khôi phục dữ liệu gốc
         setInputValue("phone", originalData.phone);
         setInputValue("email", originalData.email);
         setInputValue("CCCD", originalData.cccd);
@@ -107,21 +102,17 @@ document.addEventListener("DOMContentLoaded", function () {
         setInputValue("birthplace", originalData.birthplace);
         setInputValue("address", originalData.address);
 
-        setInputState(true); // Khóa input lại
-        toggleButtons(true); // Hiển thị lại nút "Chỉnh sửa"
+        setInputState(true);
+        toggleButtons(true);
     });
 
-    // 🔑 Sự kiện khi nhấn "Đổi mật khẩu" -> Điều hướng
     changePassBtn.addEventListener("click", function () {
-        const href = this.getAttribute("data-href"); // Lấy URL từ data-href
+        const href = this.getAttribute("data-href");
         if (href) {
-            window.location.href = href; // Điều hướng đến trang đổi mật khẩu
-        } else {
-            console.error("❌ Không tìm thấy đường dẫn đổi mật khẩu!");
+            window.location.href = href;
         }
     });
 
-    // ✅ Hàm cập nhật trạng thái input (true: khóa, false: mở)
     function setInputState(disabled) {
         document.querySelectorAll("input").forEach(input => {
             if (!["msv", "class", "course"].includes(input.id)) {
@@ -131,7 +122,6 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // ✅ Hàm hiển thị hoặc ẩn các nút phù hợp
     function toggleButtons(isDefault) {
         editBtn.style.display = isDefault ? "inline-block" : "none";
         changePassBtn.style.display = isDefault ? "inline-block" : "none";
@@ -139,13 +129,15 @@ document.addEventListener("DOMContentLoaded", function () {
         cancelBtn.style.display = isDefault ? "none" : "inline-block";
     }
 
-    // ✅ Hàm lấy giá trị input
     function getInputValue(id) {
         return document.getElementById(id).value.trim();
     }
 
-    // ✅ Hàm gán giá trị vào input
     function setInputValue(id, value) {
         document.getElementById(id).value = value || "";
+    }
+
+    function isDataChanged(updatedData, originalData) {
+        return Object.keys(updatedData).some(key => String(updatedData[key]).trim() !== String(originalData[key]).trim());
     }
 });

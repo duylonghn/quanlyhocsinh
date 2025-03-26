@@ -6,6 +6,8 @@ include __DIR__ . '/../header-input.php';
 ?>
 <link rel="stylesheet" href="teacher.css">
 <script defer src="teacher.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
 
 <div id="teacher-info" class="input-section">
     <h1>Thông tin giáo viên</h1>
@@ -18,8 +20,8 @@ include __DIR__ . '/../header-input.php';
                             <input type="text" id="fullname">
                         </div>
                         <div class="form-group teacher">
-                            <label for="msv-info">Mã giáo viên:</label>
-                            <input type="text" id="msv-info"> 
+                            <label for="mgv">Mã giáo viên:</label>
+                            <input type="text" id="mgv"> 
                         </div>
                         <div class="form-group teacher">
                             <label for="sex">Giới tính:</label>
@@ -81,7 +83,7 @@ include __DIR__ . '/../header-input.php';
                 </div>
                 <div class="btn">
                     <div class="button-group">
-                        <button class="download-btn" data-file="results_template.xlsx">Tải file mẫu</button>
+                        <button class="download-btn" data-file="thong_tin_giao_vien.xlsx">Tải file mẫu</button>
                         <button class="add-info">Thêm</button>
                     </div>
                     <label class="file-upload-container">
@@ -107,6 +109,7 @@ include __DIR__ . '/../header-input.php';
                     <th>Lớp</th>
                     <th>Trường</th>
                     <th>Khóa</th>
+                    <th>Hành động</th>
                 </tr>
             </thead>
             <tbody>

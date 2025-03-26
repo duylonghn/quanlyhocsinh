@@ -30,9 +30,6 @@ if (!$oldPassword || !$newPassword) {
     exit;
 }
 
-// ✅ Ghi log để debug
-file_put_contents("debug_log.txt", "UserID: $userId, OldPass: $oldPassword, NewPass: $newPassword\n", FILE_APPEND);
-
 // ✅ Kiểm tra mật khẩu cũ
 $stmt = $conn->prepare("SELECT password FROM users WHERE id = ?");
 $stmt->bind_param("i", $userId);

@@ -6,6 +6,7 @@ include __DIR__ . '/../header-input.php';
 ?>
 <link rel="stylesheet" href="schedule.css">
 <script defer src="schedule.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
 <div id="schedule" class="input-section">
         <div class="lichhoc-container">
@@ -43,7 +44,7 @@ include __DIR__ . '/../header-input.php';
             </div>
         </div>
         <div class="btn">
-            <button class="download-btn" data-file="results_template.xlsx">Tải file mẫu</button>
+            <button class="download-btn" data-file="thoi_khoa_bieu.xlsx">Tải file mẫu</button>
             
             <label class="file-upload-container">
                 <span class="file-upload-text">Chọn tệp</span>
@@ -51,8 +52,8 @@ include __DIR__ . '/../header-input.php';
             </label>
         </div>
         <div class="buttons-container">
-            <button class="button-info" id="save-info">Lưu</button>
-            <button class="button-info" id="cancel-info">Hủy</button>
+            <button class="button-info" id="save-btn">Lưu</button>
+            <button class="button-info" id="cancel-btn">Hủy</button>
         </div>
         <!-- Hộp thoại xác nhận -->
         <div id="confirmation-modal" class="modal" style="display: none;">

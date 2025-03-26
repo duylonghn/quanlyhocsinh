@@ -1,11 +1,13 @@
 <link rel="stylesheet" href="/admin/input-data/header-input.css">
 <script defer src="/admin/input-data/header-input.js"></script>
+<link rel="stylesheet" href="student.css">
+<script defer src="student.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
+
 <?php
 // Include header
 include __DIR__ . '/../header-input.php';
 ?>
-<link rel="stylesheet" href="student.css">
-<script defer src="student.js"></script>
 
 <div id="students-info" class="input-section">
     <h1>Thông tin học sinh</h1>
@@ -35,7 +37,7 @@ include __DIR__ . '/../header-input.php';
                         </div>
                         <div class="form-group students">
                             <label for="school">Trường:</label>
-                            <input type="text" id="schoo;">
+                            <input type="text" id="school;">
                         </div> 
                     </div>
                 </div>
@@ -93,7 +95,7 @@ include __DIR__ . '/../header-input.php';
                 </div>
                 <div class="btn">
                     <div class="button-group">
-                        <button class="download-btn" data-file="results_template.xlsx">Tải file mẫu</button>
+                        <button class="download-btn" data-file="thong_tin_hoc_sinh.xlsx">Tải file mẫu</button>
                         <button class="add-info">Thêm</button>
                     </div>
                     <label class="file-upload-container">
