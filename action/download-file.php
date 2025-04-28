@@ -5,7 +5,7 @@ if (!isset($_GET['file']) || empty($_GET['file'])) {
 }
 
 $fileName = basename($_GET['file']); // Lấy tên file từ URL, tránh truy cập thư mục khác
-$filePath = $_SERVER["DOCUMENT_ROOT"] . "/../private_html/templates/" . $fileName;
+$filePath = $_SERVER["DOCUMENT_ROOT"] . "/templates/" . $fileName;
 
 // Kiểm tra file có tồn tại không
 if (!file_exists($filePath)) {

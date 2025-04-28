@@ -1,0 +1,145 @@
+/* Thiết lập chung */
+h1 {
+    text-align: center;
+    color: #000000; /* Màu tối hơn một chút */
+}
+
+/* Khung chính */
+.admin-container {
+    display: flex;
+    justify-content: space-between;
+    max-width: 800px;
+    margin: auto;
+    background: #f8f9fa; /* Màu nền nhẹ */
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Cột trái */
+.left-col {
+    width: 40%;
+}
+
+/* Cột phải */
+.right-col {
+    width: 58%;
+}
+
+/* Nhóm nội dung */
+.group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    border-left: 5px solid #2555AA; /* Viền trái xanh */
+}
+
+/* Tiêu đề */
+.content {
+    font-weight: bold;
+    color: #2555AA;
+    margin-bottom: 10px;
+}
+
+/* Ô nhập liệu */
+input, select {
+    width: 96%;
+    padding: 8px;
+    border: 1px solid #ced4da;
+    border-radius: 5px;
+    background: #ffffff;
+}
+
+/* Nút bấm */
+.button {
+    background: #2555AA;
+    color: white;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    width: 100%;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+}
+
+.button:hover {
+    background: #013d7e;
+}
+
+.table-container {
+    width: 100%;
+    max-height: 160px; /* Điều chỉnh chiều cao tối đa */
+    overflow-y: auto; /* Chỉ cuộn dọc */
+    overflow-x: hidden; /* Ẩn cuộn ngang */
+    position: relative;
+    border: none;
+    border-radius: 5px;
+}
+
+/* Cấu trúc bảng không thay đổi */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto; /* Cho phép cột co giãn linh hoạt */
+}
+
+/* Cố định header khi cuộn */
+thead {
+    position: sticky;
+    top: 0;
+    background: #2555AA;
+    color: white;
+    z-index: 10;
+}
+
+/* Định dạng ô */
+th, td {
+    padding: 6px;
+    border: 1px solid #dee2e6;
+    text-align: center;
+    height: 20px;
+    font-size: 14px;
+    white-space: nowrap; /* Ngăn xuống dòng */
+    overflow: hidden;
+}
+
+.table-content.semester th:nth-child(1),
+.table-content.semester td:nth-child(1) {
+    width: 40%;
+}
+
+.table-content.add-sms th:nth-child(1),
+.table-content.add-sms td:nth-child(1) {
+    width: 30%;
+}
+
+.table-content th:nth-child(3),
+.table-content td:nth-child(3) {
+    width: 10%;
+}
+
+/* Ẩn thanh cuộn ngang */
+.table-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.table-container::-webkit-scrollbar-horizontal {
+    display: none;
+}
+
+/* Nút xóa */
+.delete-btn {
+    background: rgb(220, 5, 5);
+    color: white;
+    border: none;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+.delete-btn:hover {
+    background: rgb(131, 1, 1);
+}

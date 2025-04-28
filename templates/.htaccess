@@ -1,0 +1,4 @@
+<FilesMatch "\.(xlsx|xls|csv)$">
+    ForceType application/octet-stream
+    Header set Content-Disposition attachment
+</FilesMatch>
