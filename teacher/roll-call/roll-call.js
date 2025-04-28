@@ -3,6 +3,8 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     const monthTitle = document.getElementById("month-title");
     const monthBody = document.getElementById("month-body");
+    const homeroomClassTable = document.querySelector(".diemdanh table tbody");
+    const absentStudentsTable = document.querySelector(".chuadiemdanh tbody");
     let currentDate = new Date();
 
     // ✅ Hàm lấy user_id từ session
@@ -31,8 +33,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     generateCalendar(currentDate);
-    fetchAttendanceData(currentDate.toISOString().split('T')[0]);
+    fetchAttendanceData(currentDate, userId); // Truyền ngày đã được chỉnh sửa
 
+    // Hàm generateCalendar để truyền ngày theo định dạng dd_mm_yy
     function generateCalendar(date) {
         console.log("📆 Generating calendar for:", date.toISOString().split('T')[0]);
         monthBody.innerHTML = "";
@@ -48,7 +51,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             for (let i = 0; i < 7; i++) {
                 let cell = document.createElement("td");
                 cell.textContent = day.getDate();
-                cell.dataset.date = day.toISOString().split('T')[0];
+                cell.dataset.date = formatDateToURL(day);  // Chuyển ngày thành định dạng dd_mm_yy
                 cell.classList.add("calendar-day");
 
                 if (day.getMonth() !== date.getMonth()) {
@@ -62,7 +65,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                     console.log("📅 Clicked date:", this.dataset.date);
                     document.querySelectorAll(".selected-day").forEach(el => el.classList.remove("selected-day"));
                     this.classList.add("selected-day");
-                    fetchAttendanceData(this.dataset.date);
+
+                    // Debugging the selected date
+                    console.log("Selected Date (Dataset):", this.dataset.date);
+
+                    const parsedDate = parseDateFromURL(this.dataset.date);
+                    fetchAttendanceData(parsedDate, userId); // Gửi ngày đã chọn
                 });
 
                 row.appendChild(cell);
@@ -72,80 +80,94 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    function fetchAttendanceData(date) {
-        const apiUrl = `/database/rollcall-teacher.php?id=${userId}&date=${date}`;
+    // Chuyển đổi ngày sang định dạng dd_mm_yy
+    function formatDateToURL(date) {
+        let day = String(date.getDate()).padStart(2, '0');  // Đảm bảo ngày có 2 chữ số
+        let month = String(date.getMonth() + 1).padStart(2, '0');  // Đảm bảo tháng có 2 chữ số
+        let year = String(date.getFullYear()).slice(-2);  // Lấy 2 số cuối của năm
+        return `${day}_${month}_${year}`;
+    }
+
+    // Chuyển đổi định dạng dd_mm_yy thành yyyy-mm-dd cho đối tượng Date
+    function parseDateFromURL(dateString) {
+        const [day, month, year] = dateString.split('_');
+        return new Date(`20${year}-${month}-${day}`);
+    }
+
+    function fetchAttendanceData(date, teacherId) {
+        const formattedDate = formatDateToURL(date);  // Định dạng ngày
+        const apiUrl = `/database/rollcall-teacher.php?teacher_id=${teacherId}&date=${formattedDate}`;
         console.log("🔄 Fetching attendance data from:", apiUrl);
     
         fetch(apiUrl)
             .then(response => {
-                if (!response.ok) throw new Error("Lỗi khi gọi API!");
+                if (!response.ok) throw new Error("Lỗi khi gọi API!");  // Nếu có lỗi khi gọi API
                 return response.json();
             })
             .then(data => {
                 console.log("📊 Attendance Data Received:", data);
-    
-                // ✅ Xử lý bảng lớp chủ nhiệm
-                const homeroomTable = document.querySelector(".diemdanh table");
-                if (!homeroomTable) {
-                    console.error("❌ Lỗi: Không tìm thấy bảng lớp chủ nhiệm!");
-                    return;
-                }
-    
-                let homeroomTableBody = homeroomTable.querySelector("tbody");
-                if (!homeroomTableBody) {
-                    homeroomTableBody = document.createElement("tbody");
-                    homeroomTable.appendChild(homeroomTableBody);
-                }
-                homeroomTableBody.innerHTML = "";
-    
-                // ✅ Chọn lớp đầu tiên làm lớp chủ nhiệm
-                let homeroomClass = data.length > 0 ? data[0] : null;
-    
-                if (homeroomClass) {
-                    let row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${homeroomClass.class_id || '-'}</td>
-                        <td>${homeroomClass.class_name || '-'}</td>
-                        <td>${homeroomClass.student_count || '0'}</td>
-                        <td>${homeroomClass.attended_count || '0'} / ${homeroomClass.student_count || '0'}</td>
-                    `;
-                    homeroomTableBody.appendChild(row);
+                if (data.length === 0 || !data[0].students) {  // Nếu không có sinh viên hoặc dữ liệu trống
+                    displayNoAttendanceData();  // Hiển thị dữ liệu "Không có điểm danh"
                 } else {
-                    homeroomTableBody.innerHTML = `<tr><td colspan="4">Không có dữ liệu lớp chủ nhiệm</td></tr>`;
-                }
-    
-                // ✅ Xử lý bảng sinh viên chưa điểm danh
-                const absentTable = document.querySelector(".chuadiemdanh table tbody");
-                if (!absentTable) {
-                    console.error("❌ Lỗi: Không tìm thấy bảng sinh viên chưa điểm danh!");
-                    return;
-                }
-                absentTable.innerHTML = "";
-    
-                let hasAbsentStudents = false;
-    
-                data.forEach(classData => {
-                    if (Array.isArray(classData.absent_students) && classData.absent_students.length > 0) {
-                        hasAbsentStudents = true;
-                        classData.absent_students.forEach(student => {
-                            let row = `<tr>
-                                <td>${student.student_id}</td>
-                                <td>${student.fullname}</td>
-                                <td>${classData.class_name}</td>
-                                <td>Vắng</td>
-                                <td>${student.status ?? "Chưa có dữ liệu"}</td>
-                            </tr>`;
-                            absentTable.innerHTML += row;
-                        });
-                    }
-                });
-    
-                if (!hasAbsentStudents) {
-                    absentTable.innerHTML = `<tr><td colspan="5">✅ Tất cả sinh viên đã điểm danh</td></tr>`;
+                    displayAttendanceData(data);  // Hiển thị dữ liệu điểm danh nếu có
                 }
             })
-            .catch(error => console.error("❌ Fetch error:", error));
-    }    
+            .catch(error => {
+                console.error("❌ Fetch error:", error);
+                displayNoAttendanceData();  // Hiển thị dữ liệu mặc định khi có lỗi
+            });
+    }
+    
+    function displayNoAttendanceData() {
+        // Hiển thị bảng lớp chủ nhiệm với các giá trị mặc định (0)
+        homeroomClassTable.innerHTML = `
+            <tr>
+                <td>-</td>
+                <td>-</td>
+                <td>0</td>
+                <td>0 / 0</td>
+            </tr>
+        `;
+        
+        // Làm sạch bảng sinh viên vắng mặt
+        absentStudentsTable.innerHTML = '<tr><td colspan="5">Chưa đến ngày điểm danh</td></tr>';
+    }
+    
+
+    function displayAttendanceData(data) {
+        absentStudentsTable.innerHTML = ''; // Làm sạch bảng trước khi hiển thị dữ liệu mới
+
+        // Hiển thị bảng Lớp chủ nhiệm
+        const homeroomClassData = data[0]; // Giả sử dữ liệu lớp chủ nhiệm nằm ở phần tử đầu tiên của mảng
+        if (homeroomClassData) {
+            const totalStudents = homeroomClassData.students.length; // Đếm tổng số sinh viên
+            const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length; // Đếm sinh viên đã điểm danh (không phải 'Vắng')
+
+            const row = homeroomClassTable.querySelector('tr'); // Lấy dòng đầu tiên để cập nhật
+            row.innerHTML = `
+                <td>${homeroomClassData.class_id}</td>
+                <td>${homeroomClassData.class_name}</td>
+                <td>${totalStudents}</td>
+                <td>${attendedCount} / ${totalStudents}</td>
+            `;
+        }
+
+        if (data[0] && data[0].students && data[0].students.length > 0) {
+            data[0].students.forEach(student => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${student.student_id}</td>
+                    <td>${student.fullname}</td>
+                    <td>${data[0].class_name}</td> <!-- Hiển thị class_name từ lớp chủ nhiệm -->
+                    <td>${student.status}</td>
+                    <td>${student.notification_status ?? 'Chưa gửi'}</td>
+                `;
+                absentStudentsTable.appendChild(row);
+            });
+        } else {
+            absentStudentsTable.innerHTML = '<tr><td colspan="5">✅ Tất cả sinh viên đã điểm danh</td></tr>';
+        }
+    }
 
     window.prevMonth = function () {
         console.log("⏪ Previous month clicked");

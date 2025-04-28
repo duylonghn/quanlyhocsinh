@@ -10,7 +10,7 @@ include __DIR__ . '/../../header-teacher.php';
 <div class="main-container">
     <div class="left-container">
         <div class="container-gv diemdanh">
-            <h2>Lớp chủ nhiệm</h2>
+            <h2>Điểm danh của lớp</h2>
             <table>
                 <thead>
                     <th>Mã lớp</th>
@@ -28,13 +28,13 @@ include __DIR__ . '/../../header-teacher.php';
         </div>
 
         <div class="container-gv chuadiemdanh">
-            <h2>Sinh viên chưa điểm danh</h2>
+            <h2>Danh sách học sinh vắng, muộn</h2>
             <table>
                 <thead>
                     <th>Mã học sinh</th>
                     <th>Họ tên</th>
                     <th>Lớp</th>
-                    <th>Tình trạng vắng</th>
+                    <th>Tình trạng</th>
                     <th>Ghi chú</th>
                 </thead>
                 <tbody>

@@ -12,18 +12,31 @@ unsigned long frameDelay = 100;  // Thời gian thay đổi frame (ms)
 
 void displayConfirm() {
   oled.clearDisplay();
-  
+
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(50);
+  digitalWrite(BUZZER_PIN, LOW);
+  delay(100);
+
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     oled.drawBitmap(32, 0, confirm[i], FRAME_WIDTH, FRAME_HEIGHT, 1);
     oled.display();
-    delay(100);  // Điều chỉnh tốc độ chuyển động
+    delay(100);
   }
+  digitalWrite(BUZZER_PIN, HIGH);
+  delay(50);
+  digitalWrite(BUZZER_PIN, LOW);
 }
 
 void displayFail() {
   oled.clearDisplay();
-  
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(BUZZER_PIN, HIGH);
+    delay(100);
+    digitalWrite(BUZZER_PIN, LOW);
+    delay(100);
+  }
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     oled.drawBitmap(32, 0, fail[i], FRAME_WIDTH, FRAME_HEIGHT, 1);
@@ -35,7 +48,7 @@ void displayFail() {
 void displayLoader() {
   oled.clearDisplay();
   lcd.clear();
-  
+
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     lcd.setCursor(0, 0);
@@ -70,8 +83,8 @@ void displayOnScreen(String name, String id) {
   oled.clearDisplay();
   lcd.clear();
 
-  int lcdWidth = 16;  // Số cột LCD, chỉnh lại 20 nếu bạn dùng LCD 20x4
-  unsigned long displayDuration = 5000; // 5 giây
+  int lcdWidth = 16;                     // Số cột LCD, chỉnh lại 20 nếu bạn dùng LCD 20x4
+  unsigned long displayDuration = 5000;  // 5 giây
   unsigned long startTime = millis();
 
   int nameLength = name.length();
@@ -79,7 +92,7 @@ void displayOnScreen(String name, String id) {
 
   while (millis() - startTime < displayDuration) {
     lcd.setCursor(0, 0);
-    
+
     if (nameLength <= lcdWidth) {
       // Nếu tên ngắn hơn màn hình thì in cố định
       lcd.print(name);
@@ -90,7 +103,7 @@ void displayOnScreen(String name, String id) {
 
       pos++;
       if (pos > nameLength - lcdWidth) {
-        pos = 0; // Quay lại từ đầu
+        pos = 0;  // Quay lại từ đầu
       }
     }
 
