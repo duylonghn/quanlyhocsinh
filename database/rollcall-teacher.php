@@ -115,5 +115,6 @@ foreach ($classData as $class) {
     }
 }
 
-echo json_encode($attendanceData);
+header('Content-Type: application/json; charset=utf-8');
+echo json_encode($attendanceData, JSON_UNESCAPED_UNICODE);
 ?>

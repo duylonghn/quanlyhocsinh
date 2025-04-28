@@ -1,6 +1,8 @@
 <?php
-// TOKEN bot Telegram
-$token = "7712476536:AAFD61uh7_VjskEd9w2RtCsVQrVpbyG21y8";
+require 'vendor/autoload.php';
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+$token = getenv('TELEGRAM_BOT_TOKEN2');
 
 // ID user cần forward tin nhắn
 $forward_user_id = "7957387866";

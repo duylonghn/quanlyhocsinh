@@ -43,6 +43,7 @@ void displayFail() {
     oled.display();
     delay(100);
   }
+  showDefaultDisplay();
 }
 
 void displayLoader() {
