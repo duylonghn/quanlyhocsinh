@@ -44,10 +44,10 @@ $current_dir = $_SERVER['REQUEST_URI'];
             <div class="title">Lịch sử</div>
         </button>
 
-        <button class="tab <?php if($current_page == 'admin.php') echo 'a'; ?>" 
+        <!--<button class="tab <?php if($current_page == 'admin.php') echo 'a'; ?>" 
             data-href="/admin/admin.php<?php echo $user_id ? '?id=' . $user_id : ''; ?>">
             <div class="title">Quản trị</div>
-        </button>
+        </button>-->
 
         <button id="logout" class="tab">
             <div class="title">Đăng xuất</div>

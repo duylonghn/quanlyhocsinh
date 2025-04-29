@@ -53,6 +53,26 @@ h2 {
     font-weight: bold;
 }
 
+.late-status {
+    background-color: red;
+    color: white;
+}
+
+.on-time-status {
+    background-color: green;
+    color: white;
+}
+
+.late-appear-status {
+    background-color: yellow;
+    color: black;
+}
+
+.licensed-status {
+    background-color: blue;
+    color: white;
+}
+
 /*Lịch tháng*/
 .calendar-container {
     background: white;

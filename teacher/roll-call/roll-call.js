@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     
     function displayNoAttendanceData() {
         // Hiển thị bảng lớp chủ nhiệm với các giá trị mặc định (0)
-        homeroomClassTable.innerHTML = `
+        homeroomClassTable.innerHTML = ` 
             <tr>
                 <td>-</td>
                 <td>-</td>
@@ -132,17 +132,16 @@ document.addEventListener("DOMContentLoaded", async function () {
         // Làm sạch bảng sinh viên vắng mặt
         absentStudentsTable.innerHTML = '<tr><td colspan="5">Chưa đến ngày điểm danh</td></tr>';
     }
-    
 
     function displayAttendanceData(data) {
         absentStudentsTable.innerHTML = ''; // Làm sạch bảng trước khi hiển thị dữ liệu mới
-
+    
         // Hiển thị bảng Lớp chủ nhiệm
         const homeroomClassData = data[0]; // Giả sử dữ liệu lớp chủ nhiệm nằm ở phần tử đầu tiên của mảng
         if (homeroomClassData) {
             const totalStudents = homeroomClassData.students.length; // Đếm tổng số sinh viên
             const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length; // Đếm sinh viên đã điểm danh (không phải 'Vắng')
-
+    
             const row = homeroomClassTable.querySelector('tr'); // Lấy dòng đầu tiên để cập nhật
             row.innerHTML = `
                 <td>${homeroomClassData.class_id}</td>
@@ -151,23 +150,27 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <td>${attendedCount} / ${totalStudents}</td>
             `;
         }
-
+    
         if (data[0] && data[0].students && data[0].students.length > 0) {
             data[0].students.forEach(student => {
                 const row = document.createElement("tr");
+    
+                // Kiểm tra notification_status có giá trị 'Đã gửi' hoặc 'Chưa gửi'
+                const note = (student.notification_status === 'Đã gửi') ? 'Đã gửi' : 'Chưa gửi';
+    
                 row.innerHTML = `
                     <td>${student.student_id}</td>
                     <td>${student.fullname}</td>
-                    <td>${data[0].class_name}</td> <!-- Hiển thị class_name từ lớp chủ nhiệm -->
+                    <td>${data[0].class_name}</td>
                     <td>${student.status}</td>
-                    <td>${student.notification_status ?? 'Chưa gửi'}</td>
+                    <td>${note}</td>
                 `;
                 absentStudentsTable.appendChild(row);
             });
         } else {
             absentStudentsTable.innerHTML = '<tr><td colspan="5">✅ Tất cả sinh viên đã điểm danh</td></tr>';
         }
-    }
+    }    
 
     window.prevMonth = function () {
         console.log("⏪ Previous month clicked");

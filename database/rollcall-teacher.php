@@ -59,22 +59,23 @@ foreach ($classData as $class) {
         $students[] = [
             'student_id' => $studentRow['student_id'],
             'fullname' => $studentRow['fullname'],
-            'status' => 'Vắng' // Mặc định là vắng nếu không có trạng thái
+            'status' => 'Vắng', // Mặc định là vắng nếu không có trạng thái
+            'notification_status' => 'Chưa gửi'  // Mặc định là 'Chưa gửi'
         ];
     }
 
-    // Truy vấn lấy điểm danh của sinh viên trong lớp cho ngày hiện tại từ bảng điểm danh trong diemdanh
-    $attendanceQuery = "SELECT student_id, status
+    // Truy vấn lấy điểm danh và ghi chú (note) của sinh viên trong lớp cho ngày hiện tại từ bảng điểm danh trong diemdanh
+    $attendanceQuery = "SELECT student_id, status, note
                         FROM $rollcall_table
                         WHERE student_id = ?";
     $attendanceStmt = $conn_rollcall->prepare($attendanceQuery);  // Sử dụng kết nối `conn_rollcall` để truy vấn bảng điểm danh
     foreach ($students as &$student) {
-        // Lặp qua các sinh viên và lấy trạng thái điểm danh của từng sinh viên
+        // Lặp qua các sinh viên và lấy trạng thái điểm danh và ghi chú (note) của từng sinh viên
         $attendanceStmt->bind_param("i", $student['student_id']);
         $attendanceStmt->execute();
         $attendanceResult = $attendanceStmt->get_result();
 
-        // Cập nhật trạng thái điểm danh cho sinh viên
+        // Cập nhật trạng thái điểm danh và ghi chú cho sinh viên
         if ($attendanceRow = $attendanceResult->fetch_assoc()) {
             switch ($attendanceRow['status']) {
                 case 'fail':
@@ -92,6 +93,13 @@ foreach ($classData as $class) {
                 default:
                     $student['status'] = 'Vắng'; // Trường hợp mặc định nếu không có trạng thái
                     break;
+            }
+            
+            // Cập nhật ghi chú (note): Nếu có note là "sent" thì đánh dấu là "Đã gửi", nếu không có note (null) thì để "Chưa gửi"
+            if ($attendanceRow['note'] === 'sent') {
+                $student['notification_status'] = 'Đã gửi';
+            } else {
+                $student['notification_status'] = 'Chưa gửi'; // Nếu note là null hoặc không phải 'sent'
             }
         }
     }

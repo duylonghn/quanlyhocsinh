@@ -7,12 +7,12 @@ include __DIR__ . '/../../header.php';
 <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.9/flatpickr.min.js"></script>
 
 <div class="roll-call">
-<div class="attendance-container">
+    <div class="attendance-container">
         <h2>Điểm Danh Hàng Ngày</h2>
         <table class="attendance-table">
             <thead>
                 <tr>
-                    <th rowspan="1" colspan="2">Thứ</th>
+                    <th>Thứ</th>
                     <th>Thứ 2</th>
                     <th>Thứ 3</th>
                     <th>Thứ 4</th>
@@ -22,35 +22,17 @@ include __DIR__ . '/../../header.php';
                     <th>Chủ Nhật</th>
                 </tr>
                 <tr id="attendance-dates">
-                    <th rowspan="1" colspan="2">Ngày</th>
+                    <th>Ngày</th>
                     <th></th><th></th><th></th><th></th><th></th><th></th><th></th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td rowspan="3" class="buoi">Buổi sáng</td>
                     <td class="status-label">Trạng thái</td>
                     <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                 </tr>
                 <tr>
                     <td class="status-label">Checkin</td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                <tr>
-                    <td class="status-label">Checkout</td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                <tr>
-                    <td rowspan="3" class="buoi">Buổi chiều</td>
-                    <td class="status-label">Trạng thái</td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                <tr>
-                    <td class="status-label">Checkin</td>
-                    <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
-                </tr>
-                <tr>
-                    <td class="status-label">Checkout</td>
                     <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
                 </tr>
             </tbody>
