@@ -12,9 +12,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
             // Hàm để lấy thông tin thời khóa biểu
             function fetchSchedule(semesterId) {
+                showLoading(); // Hiển thị loading khi bắt đầu tải dữ liệu
                 return fetch(`/database/timetable-students.php?id=${userId}&semesters_id=${semesterId}`)
                     .then(response => response.json())
                     .then(data => {
+                        hideLoading(); // Ẩn loading khi nhận được dữ liệu
                         if (!data || typeof data !== "object" || !data.schedule || !Array.isArray(data.schedule)) {
                             console.error('⚠️ Dữ liệu thời khóa biểu không hợp lệ hoặc rỗng.');
                             return null;
@@ -22,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
                         return data;
                     })
                     .catch(error => {
+                        hideLoading(); // Ẩn loading khi có lỗi
                         console.error('❌ Lỗi khi tải thời khóa biểu:', error);
                         return null;
                     });

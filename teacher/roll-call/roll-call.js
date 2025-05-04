@@ -98,13 +98,18 @@ document.addEventListener("DOMContentLoaded", async function () {
         const formattedDate = formatDateToURL(date);  // Định dạng ngày
         const apiUrl = `/database/rollcall-teacher.php?teacher_id=${teacherId}&date=${formattedDate}`;
         console.log("🔄 Fetching attendance data from:", apiUrl);
-    
+
+        // Hiển thị loading khi đang lấy dữ liệu
+        showLoading();
+
         fetch(apiUrl)
             .then(response => {
                 if (!response.ok) throw new Error("Lỗi khi gọi API!");  // Nếu có lỗi khi gọi API
                 return response.json();
             })
             .then(data => {
+                hideLoading(); // Ẩn loading khi nhận dữ liệu
+
                 console.log("📊 Attendance Data Received:", data);
                 
                 // Kiểm tra dữ liệu trả về
@@ -115,6 +120,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
             })
             .catch(error => {
+                hideLoading(); // Ẩn loading khi gặp lỗi
                 console.error("❌ Fetch error:", error);
                 displayNoAttendanceData();  // Hiển thị dữ liệu mặc định khi có lỗi
             });
@@ -132,7 +138,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         `;
         
         // Làm sạch bảng sinh viên vắng mặt
-        absentStudentsTable.innerHTML = '<tr><td colspan="5">Chưa đến ngày điểm danh</td></tr>';
+        absentStudentsTable.innerHTML = '<tr><td colspan="5">Không có thông tin điểm danh (Hoặc là ngày nghỉ)</td></tr>';
     }
 
     function displayAttendanceData(data) {
@@ -175,7 +181,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         } else {
             absentStudentsTable.innerHTML = '<tr><td colspan="5">✅ Tất cả sinh viên đã điểm danh</td></tr>';
         }
-    }    
+    }
 
     window.prevMonth = function () {
         console.log("⏪ Previous month clicked");

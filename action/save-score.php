@@ -61,45 +61,6 @@ foreach ($input['data'] as $entry) {
     );
     $stmt->execute();
     $stmt->close();
-
-    // Đánh giá
-    $behavior = $conn->real_escape_string($entry['behavior'] ?? '');
-    $academic = $conn->real_escape_string($entry['academic_performance'] ?? '');
-    $rating = $conn->real_escape_string($entry['rating'] ?? '');
-
-    // Kiểm tra xem có đánh giá nào không
-    if (!$behavior && !$academic && !$rating) {
-        continue; // Bỏ qua nếu không có đánh giá nào
-    }
-
-    // Chèn đánh giá hoặc cập nhật nếu đã tồn tại
-    $check = $conn->prepare("SELECT 1 FROM evaluations WHERE student_id = ? AND semester_id = ?");
-    $check->bind_param("is", $studentId, $semesterId);
-    $check->execute();
-    $result = $check->get_result();
-
-    if ($result->num_rows > 0) {
-        // Cập nhật đánh giá nếu đã tồn tại
-        $update = $conn->prepare("
-            UPDATE evaluations
-            SET behavior = ?, academic_performance = ?, rating = ?
-            WHERE student_id = ? AND semester_id = ?
-        ");
-        $update->bind_param("sssis", $behavior, $academic, $rating, $studentId, $semesterId);
-        $update->execute();
-        $update->close();
-    } else {
-        // Chèn mới nếu chưa tồn tại
-        $insert = $conn->prepare("
-            INSERT INTO evaluations (student_id, semester_id, behavior, academic_performance, rating)
-            VALUES (?, ?, ?, ?, ?)
-        ");
-        $insert->bind_param("issss", $studentId, $semesterId, $behavior, $academic, $rating);
-        $insert->execute();
-        $insert->close();
-    }
-
-    $check->close();
 }
 
 echo json_encode(["success" => true]);

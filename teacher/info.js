@@ -1,34 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
     let originalData = {}; // Biến lưu dữ liệu gốc
 
-    // 🔄 Lấy `teacher_id` từ session
+    showLoading(); // ✅ Bắt đầu loading
+
     fetch("/action/get-session.php")
         .then(response => response.json())
         .then(sessionData => {
             if (!sessionData.user_id || isNaN(sessionData.user_id)) {
                 alert("Không tìm thấy ID giáo viên trong session hoặc ID không hợp lệ!");
+                hideLoading(); // ✅ Ẩn loading khi lỗi
                 return;
             }
 
             const teacherId = sessionData.user_id;
 
-            // Gọi API lấy thông tin giáo viên
             fetch(`/database/info-teacher.php?teacher_id=${teacherId}`)
                 .then(response => response.json())
                 .then(data => {
+                    hideLoading(); // ✅ Ẩn loading khi lấy xong
+
                     if (data.error) {
                         alert(data.error);
                     } else {
-                        originalData = { ...data, teacher_id: teacherId }; // Lưu cả teacher_id
+                        originalData = { ...data, teacher_id: teacherId };
 
-                        // Điền dữ liệu vào HTML
                         document.getElementById("fullname").textContent = data.fullname || "N/A";
                         document.getElementById("msv").textContent = data.id || "N/A";
                         document.getElementById("sex").textContent = data.sex || "N/A";
                         document.getElementById("class").textContent = data.class_id || "N/A";
                         document.getElementById("course").textContent = data.course || "N/A";
 
-                        // Gán giá trị vào input
                         setInputValue("phone", data.phone);
                         setInputValue("email", data.email);
                         setInputValue("CCCD", data.cccd);
@@ -39,10 +40,17 @@ document.addEventListener("DOMContentLoaded", function () {
 
                         setInputState(true);
                     }
+                })
+                .catch(() => {
+                    hideLoading(); // ✅ Ẩn nếu lỗi mạng
+                    alert("Lỗi khi lấy thông tin giáo viên!");
                 });
+        })
+        .catch(() => {
+            hideLoading();
+            alert("Lỗi khi lấy session!");
         });
 
-    // Các nút điều khiển
     const editBtn = document.getElementById("edit-info");
     const saveBtn = document.getElementById("save-info");
     const cancelBtn = document.getElementById("cancel-info");
@@ -75,6 +83,8 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        showLoading(); // ✅ Bắt đầu loading khi gửi cập nhật
+
         fetch("/action/update-info/update-info-teacher.php", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -82,6 +92,8 @@ document.addEventListener("DOMContentLoaded", function () {
         })
         .then(response => response.json())
         .then(result => {
+            hideLoading(); // ✅ Kết thúc loading
+
             if (result.success) {
                 alert("✅ Cập nhật thông tin thành công!");
                 originalData = { ...updatedData, teacher_id: originalData.teacher_id };
@@ -90,6 +102,10 @@ document.addEventListener("DOMContentLoaded", function () {
             } else {
                 alert("❌ Lỗi khi cập nhật: " + result.error);
             }
+        })
+        .catch(() => {
+            hideLoading();
+            alert("Lỗi kết nối khi cập nhật thông tin!");
         });
     });
 

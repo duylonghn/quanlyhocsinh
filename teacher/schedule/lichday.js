@@ -41,6 +41,7 @@ async function fetchSchedule(teacherId, semesterId) {
 
 // Hàm tạo bảng lịch dạy
 async function createSchedule(teacherId, semesterId) {
+    showLoading(); // Hiển thị loading khi tạo lịch
     const scheduleData = await fetchSchedule(teacherId, semesterId);
 
     const dateHeader = document.getElementById('date-header');
@@ -110,6 +111,8 @@ async function createSchedule(teacherId, semesterId) {
             cell.querySelector('.class-id').textContent = entry.class;
         }
     });
+
+    hideLoading(); // Ẩn loading khi hoàn tất
 }
 
 // Hàm tính toán và trả về semester_id
@@ -165,9 +168,15 @@ document.getElementById('semester').addEventListener('change', async function ()
 
     const teacherId = await getTeacherIdFromSession();
     if (teacherId) {
+        showLoading(); // Hiển thị loading khi thay kỳ học
         await createSchedule(teacherId, semesterId);
+        hideLoading(); // Ẩn loading sau khi tạo xong
     }
 });
 
 // Gọi hàm hiển thị kỳ học và tạo lịch khi trang tải xong
-document.addEventListener("DOMContentLoaded", displaySemesters);
+document.addEventListener("DOMContentLoaded", async function () {
+    showLoading(); // Hiện loading khi bắt đầu
+    await displaySemesters();
+    hideLoading(); // Ẩn loading sau khi xong
+});

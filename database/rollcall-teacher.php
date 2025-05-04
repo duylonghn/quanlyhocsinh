@@ -45,7 +45,16 @@ while ($row = $studentResult->fetch_assoc()) {
 }
 
 // Bước 3: Truy vấn thông tin điểm danh từ bảng rollcall trong DB diemdanh
-$rollcall_table = 'rollcall_' . date('d_m_y'); // Lấy tên bảng rollcall theo ngày hiện tại
+// Nhận ngày từ GET request, ví dụ: 03_05_25
+$date_param = isset($_GET['date']) ? $_GET['date'] : '';
+
+if (!preg_match('/^\d{2}_\d{2}_\d{2}$/', $date_param)) {
+    echo json_encode(["error" => "Ngày không hợp lệ hoặc thiếu"]);
+    exit();
+}
+
+$rollcall_table = 'rollcall_' . $date_param;
+
 $studentIdsList = implode(',', $studentIds); // Chuyển danh sách student_id thành chuỗi để truy vấn
 
 // Truy vấn lấy thông tin điểm danh

@@ -18,10 +18,16 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const userId = sessionData.user_id; // Lấy user_id từ session
 
+            // Bắt đầu hiển thị loading
+            showLoading();
+
             // Gọi API lấy thông tin học sinh
             fetch(`/database/info-students.php?id=${userId}`)
                 .then(response => response.json())
                 .then(data => {
+                    // Kết thúc hiển thị loading
+                    hideLoading();
+
                     if (data.error) {
                         alert(data.error);
                         return;
@@ -54,9 +60,17 @@ document.addEventListener("DOMContentLoaded", function () {
                     document.getElementById("phone-parents").textContent = data.parent_phone || "Chưa cập nhật";
                     document.getElementById("relationship").textContent = data.relationship || "Chưa cập nhật";
                 })
-                .catch(error => console.error("Lỗi khi lấy dữ liệu học sinh:", error));
+                .catch(error => {
+                    // Kết thúc hiển thị loading nếu có lỗi
+                    hideLoading();
+                    console.error("Lỗi khi lấy dữ liệu học sinh:", error);
+                });
         })
-        .catch(error => console.error("Lỗi khi lấy session:", error));
+        .catch(error => {
+            // Kết thúc hiển thị loading nếu có lỗi khi lấy session
+            hideLoading();
+            console.error("Lỗi khi lấy session:", error);
+        });
 
     // Xử lý sự kiện khi nhấn vào nút "Đổi mật khẩu"
     changepassButton.addEventListener('click', function () {

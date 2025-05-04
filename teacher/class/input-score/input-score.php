@@ -25,9 +25,6 @@ include __DIR__ . '/../../../header-teacher.php';
                             <th>T2</th>
                             <th>CK</th>
                             <th>TK</th>
-                            <th>HK</th>
-                            <th>HL</th>
-                            <th>XL</th>
                         </tr>
                     </thead>
                     <tbody id="tbTableBody">

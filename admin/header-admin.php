@@ -5,6 +5,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: /login/login.php");
     exit(); // Đảm bảo dừng script sau khi điều hướng
 }
+include 'loading.html';
 $user_id = $_SESSION['user_id'];
 // Lấy URL hiện tại
 $current_page = basename($_SERVER['PHP_SELF']);

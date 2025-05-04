@@ -8,9 +8,12 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    showLoading(); // Hiển thị loading khi bắt đầu gọi API
+
     fetch(`/database/get-students-list.php?class_id=${classId}`)
         .then(response => response.json())
         .then(data => {
+            hideLoading(); // Ẩn loading sau khi nhận được dữ liệu
 
             if (!data.success) {
                 alert(data.message || "Lỗi không xác định từ API!");
@@ -19,7 +22,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
             populateTable(data.data);
         })
-        .catch(error => console.error("Lỗi khi lấy danh sách học sinh:", error));
+        .catch(error => {
+            hideLoading(); // Ẩn loading trong trường hợp có lỗi
+            console.error("Lỗi khi lấy danh sách học sinh:", error);
+        });
 });
 
 function populateTable(students) {
@@ -55,3 +61,4 @@ function populateTable(students) {
         tableBody.appendChild(row);
     });
 }
+

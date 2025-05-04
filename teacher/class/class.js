@@ -6,8 +6,10 @@ function getTeacherIdFromURL() {
     return teacherId;
 }
 
+// Hàm lấy lớp học từ API
 async function fetchClasses(teacherId) {
     try {
+        showLoading(); // Hiển thị loading khi gọi API
         console.log('Đang gọi API với teacher_id:', teacherId); // Log để kiểm tra khi gọi API
         const response = await fetch(`/database/get-class.php?teacher_id=${teacherId}`);
 
@@ -26,9 +28,12 @@ async function fetchClasses(teacherId) {
     } catch (error) {
         console.error('Lỗi khi lấy dữ liệu lớp học:', error);
         return { homeroom_class: null, subject_classes: [] };
+    } finally {
+        hideLoading(); // Ẩn loading sau khi hoàn tất
     }
 }
 
+// Hàm hiển thị lớp học
 async function displayClasses() {
     const teacherId = getTeacherIdFromURL();
     if (!teacherId) {
@@ -39,23 +44,25 @@ async function displayClasses() {
     const data = await fetchClasses(teacherId);
     const { homeroom_class, subject_classes } = data;
 
-    // Hiển thị lớp chủ nhiệm
+    // Lớp chủ nhiệm
     const homeroomSection = document.querySelector('.chunhiem');
+    const homeroomTableBody = homeroomSection.querySelector('tbody');
     const homeroomHTML = homeroom_class
         ? `<tr>
             <td>${homeroom_class.id}</td>
             <td>${homeroom_class.class_name}</td>
             <td>${homeroom_class.student_count}</td>
             <td><a href="/teacher/class/students-list/students-list.php?class_id=${homeroom_class.id}">Xem chi tiết</a></td>
+            <td><a href="/teacher/class/evaluation/evaluation.php?class_id=${homeroom_class.id}">Nhập thông tin</a></td>
         </tr>`
         : `<tr><td colspan="5">Không có lớp chủ nhiệm</td></tr>`;
-    const homeroomTableBody = homeroomSection.querySelector('tbody');
     if (homeroomTableBody) {
         homeroomTableBody.innerHTML = homeroomHTML;
     }
 
-    // Hiển thị lớp dạy môn
+    // Lớp bộ môn
     const subjectSection = document.querySelector('.bomon');
+    const subjectTableBody = subjectSection.querySelector('tbody');
     const subjectHTML = subject_classes.length > 0
         ? subject_classes.map(classInfo => {
             return `<tr>
@@ -73,7 +80,6 @@ async function displayClasses() {
             </tr>`;
         }).join('')
         : `<tr><td colspan="6">Không có lớp dạy môn</td></tr>`;
-    const subjectTableBody = subjectSection.querySelector('tbody');
     if (subjectTableBody) {
         subjectTableBody.innerHTML = subjectHTML;
     }

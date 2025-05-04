@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     const cancelButton = document.querySelector(".cancel");
 
     const subjectName = localStorage.getItem('subject_name') || '';
-
     const urlParams = new URLSearchParams(window.location.search);
     const classId = urlParams.get('class_id');
 
@@ -16,21 +15,10 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const subjectMap = {
-        "Âm Nhạc": "AN",
-        "Công Nghệ": "CN",
-        "Địa Lý": "DL",
-        "Giáo Dục Công Dân": "GD",
-        "Hóa Học": "HH",
-        "Lịch Sử": "LS",
-        "Mỹ Thuật": "MT",
-        "Ngữ Văn": "NV",
-        "Quốc Phòng": "QP",
-        "Sinh Học": "SH",
-        "Thể Dục": "TD",
-        "Tiếng Anh": "TA",
-        "Tin Học": "TH",
-        "Toán": "TO",
-        "Vật Lý": "VL"
+        "Âm Nhạc": "AN", "Công Nghệ": "CN", "Địa Lý": "DL", "Giáo Dục Công Dân": "GD",
+        "Hóa Học": "HH", "Lịch Sử": "LS", "Mỹ Thuật": "MT", "Ngữ Văn": "NV",
+        "Quốc Phòng": "QP", "Sinh Học": "SH", "Thể Dục": "TD", "Tiếng Anh": "TA",
+        "Tin Học": "TH", "Toán": "TO", "Vật Lý": "VL"
     };
 
     const subjectId = subjectMap[subjectName];
@@ -39,17 +27,25 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
+    showLoading(); // Hiển thị loading khi bắt đầu gọi API
+
     fetch(`/database/get-students-list.php?class_id=${classId}`)
         .then(response => response.json())
         .then(studentRes => {
+            hideLoading(); // Ẩn loading sau khi nhận được dữ liệu học sinh
+
             if (!studentRes.success) {
                 alert(studentRes.message || "Lỗi không xác định từ API học sinh!");
                 return;
             }
 
+            showLoading(); // Hiển thị loading khi bắt đầu gọi API điểm
+
             fetch(`/database/get-score.php?class_id=${classId}&subject_id=${subjectId}`)
                 .then(response => response.json())
                 .then(scoreRes => {
+                    hideLoading(); // Ẩn loading sau khi nhận được dữ liệu điểm
+
                     if (!scoreRes.success) {
                         console.warn("Không lấy được điểm:", scoreRes.message);
                     }
@@ -62,9 +58,15 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     }, 100);
                 })
-                .catch(error => console.error("Lỗi khi gọi API điểm:", error));
+                .catch(error => {
+                    hideLoading(); // Ẩn loading trong trường hợp có lỗi khi gọi API điểm
+                    console.error("Lỗi khi gọi API điểm:", error);
+                });
         })
-        .catch(error => console.error("Lỗi khi lấy danh sách học sinh:", error));
+        .catch(error => {
+            hideLoading(); // Ẩn loading trong trường hợp có lỗi khi gọi API danh sách học sinh
+            console.error("Lỗi khi lấy danh sách học sinh:", error);
+        });
 
     if (downloadBtn) {
         downloadBtn.addEventListener("click", function () {
@@ -86,7 +88,6 @@ document.addEventListener("DOMContentLoaded", function () {
             const rows = document.querySelectorAll(".table-content tbody tr");
             rows.forEach((row) => {
                 row.querySelectorAll('input[type="number"]').forEach(input => input.value = '');
-                row.querySelectorAll('select').forEach(select => select.value = '');
             });
         });
     }
@@ -115,11 +116,6 @@ document.addEventListener("DOMContentLoaded", function () {
                     return input ? parseFloat(input.value) || null : null;
                 };
 
-                const getSelectValue = (prefix) => {
-                    const select = row.querySelector(`select[name="${prefix}_${studentId}"]`);
-                    return select ? select.value : null;
-                };
-
                 payload.push({
                     student_id: studentId,
                     class_id: classId,
@@ -134,13 +130,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     test_1: getInputValue('t1'),
                     test_2: getInputValue('t2'),
                     final_exam: getInputValue('ck'),
-                    total_score: getInputValue('tk'),
-
-                    behavior: getSelectValue('hk'),
-                    academic_performance: getSelectValue('hl'),
-                    rating: getSelectValue('xl')
+                    total_score: getInputValue('tk')
                 });
             });
+
+            showLoading(); // Hiển thị loading khi gửi dữ liệu
 
             fetch("/../../../action/save-score.php", {
                 method: "POST",
@@ -151,6 +145,8 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(res => res.json())
                 .then(result => {
+                    hideLoading(); // Ẩn loading sau khi hoàn thành gửi dữ liệu
+
                     if (result.success) {
                         alert("Lưu điểm thành công!");
                     } else {
@@ -158,6 +154,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(err => {
+                    hideLoading(); // Ẩn loading trong trường hợp có lỗi khi gửi dữ liệu
                     console.error("Lỗi khi gửi dữ liệu:", err);
                     alert("Lỗi khi gửi dữ liệu lên server!");
                 });
@@ -197,19 +194,6 @@ function processStudentData(studentsData) {
                     input.value = score;
                 }
             });
-
-            const behavior = row[12];
-            const academicPerformance = row[13];
-            const rating = row[14];
-
-            const behaviorSelect = studentRow.querySelector(`select[name^='hk_${studentId}']`);
-            if (behaviorSelect && behavior) behaviorSelect.value = behavior;
-
-            const academicSelect = studentRow.querySelector(`select[name^='hl_${studentId}']`);
-            if (academicSelect && academicPerformance) academicSelect.value = academicPerformance;
-
-            const ratingSelect = studentRow.querySelector(`select[name^='xl_${studentId}']`);
-            if (ratingSelect && rating) ratingSelect.value = rating;
         }
     });
 }
@@ -242,31 +226,6 @@ function populateTable(students, subjectName) {
             <td><input type="number" name="t2_${student.id}" min="0" max="10" /></td>
             <td><input type="number" name="ck_${student.id}" min="0" max="10" /></td>
             <td><input type="number" name="tk_${student.id}" min="0" max="10" /></td>
-            <td>
-                <select name="hk_${student.id}">
-                    <option value="">-- Chọn --</option>
-                    <option value="Tốt">Tốt</option>
-                    <option value="Khá">Khá</option>
-                    <option value="Yếu">Yếu</option>
-                </select>
-            </td>
-            <td>
-                <select name="hl_${student.id}">
-                    <option value="">-- Chọn --</option>
-                    <option value="Giỏi">Giỏi</option>
-                    <option value="Khá">Khá</option>
-                    <option value="Trung bình">Trung bình</option>
-                </select>
-            </td>
-            <td>
-                <select name="xl_${student.id}">
-                    <option value="">-- Chọn --</option>
-                    <option value="Giỏi">Giỏi</option>
-                    <option value="Khá">Khá</option>
-                    <option value="Trung bình">Trung bình</option>
-                    <option value="Yếu">Yếu</option>
-                </select>
-            </td>
         `;
         tableBody.appendChild(row);
     });

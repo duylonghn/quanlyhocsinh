@@ -12,12 +12,15 @@ document.addEventListener("DOMContentLoaded", function () {
     let studentId = null;
 
     console.log("📦 Đang tải session...");
+    showLoading(); // 👉 Hiện loading trước khi fetch session
+
     fetch('/action/get-session.php')
         .then(response => response.json())
         .then(sessionData => {
             console.log("✅ Session nhận được:", sessionData);
             if (!sessionData.user_id) {
                 console.error("❌ Lỗi: Không tìm thấy user_id trong session.");
+                hideLoading();
                 return;
             }
 
@@ -27,7 +30,10 @@ document.addEventListener("DOMContentLoaded", function () {
             generateCalendar(currentDate);
             fetchAndRenderAttendance(studentId, currentDate);
         })
-        .catch(err => console.error("❌ Lỗi khi lấy session:", err));
+        .catch(err => {
+            console.error("❌ Lỗi khi lấy session:", err);
+            hideLoading();
+        });
 
     function updateAttendanceTable(date) {
         let weekStart = getStartOfWeek(date);
@@ -52,50 +58,52 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     function fetchAndRenderAttendance(studentId, date) {
+        showLoading(); // 👉 Bắt đầu gọi API thì hiện loading
+
         let weekStart = getStartOfWeek(date);
         weekStart.setDate(weekStart.getDate() + 1); // Đảm bảo tuần bắt đầu từ thứ Hai
         let startDate = weekStart.toISOString().split('T')[0];
-    
+
         console.log("📡 Gọi API:", `/../../database/rollcall-student.php?student_id=${studentId}&start_date=${startDate}`);
-    
+
         fetch(`/../../database/rollcall-student.php?student_id=${studentId}&start_date=${startDate}`)
             .then(res => res.json())
             .then(data => {
                 console.log("📥 Dữ liệu điểm danh nhận được:", data);
-    
+
                 const statusMap = {
                     "fail": "Vắng",
                     "done": "Đúng giờ",
                     "late": "Muộn",
                     "licensed": "Có phép"
                 };
-    
+
                 for (let i = 0; i < 7; i++) {
                     let current = new Date(weekStart);
                     current.setDate(weekStart.getDate() + i);
                     let key = current.toISOString().split('T')[0];
                     let records = data[key] || [];
-                
+
                     if (statusCells[i]) {
                         statusCells[i].textContent = "";
                         statusCells[i].classList.remove("late-status", "on-time-status", "absent-status", "licensed-status");
                     }
-                
+
                     if (timeCells[i]) {
                         timeCells[i].textContent = "";
                     }
-                
+
                     if (records.length === 0) {
                         console.log(`📭 Không có dữ liệu cho ngày ${key}`);
                     }
-                
+
                     records.forEach(record => {
                         const status = statusMap[record.status] || record.status;
                         const time = record.time ? record.time : "";
-                
+
                         if (statusCells[i]) {
                             statusCells[i].textContent = status;
-                
+
                             if (status === "Muộn") {
                                 statusCells[i].classList.add("late-status");
                             } else if (status === "Đúng giờ") {
@@ -106,17 +114,20 @@ document.addEventListener("DOMContentLoaded", function () {
                                 statusCells[i].classList.add("licensed-status");
                             }
                         }
-                
+
                         if (timeCells[i]) {
                             timeCells[i].textContent = time;
                         }
-                
+
                         console.log(`✅ ${key}: ${status} - ${time}`);
                     });
-                }                
+                }
+
+                hideLoading(); // ✅ Sau khi render xong thì ẩn loading
             })
             .catch(err => {
                 console.error("❌ Lỗi khi lấy dữ liệu điểm danh:", err);
+                hideLoading(); // ❌ Lỗi thì cũng ẩn loading
             });
     }
 
@@ -148,7 +159,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 cell.addEventListener("click", function () {
                     document.querySelectorAll(".selected-day").forEach(el => el.classList.remove("selected-day"));
                     this.classList.add("selected-day");
-                
+
                     let selectedDateStr = this.dataset.date;
                     let [year, month, day] = selectedDateStr.split("-").map(Number);
                     let selectedDate = new Date(year, month - 1, day + 1);
@@ -159,7 +170,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     if (studentId) {
                         fetchAndRenderAttendance(studentId, selectedDate);
                     }
-                });                 
+                });
 
                 row.appendChild(cell);
                 day.setDate(day.getDate() + 1);

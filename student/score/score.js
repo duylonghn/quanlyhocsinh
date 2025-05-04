@@ -1,21 +1,27 @@
 document.addEventListener("DOMContentLoaded", function () {
     const semesterSelect = document.getElementById("semester");
 
+    showLoading(); // 👉 Hiện loading ngay từ đầu
+
     fetch('/action/get-session.php')
         .then(response => response.json())
         .then(sessionData => {
             if (!sessionData.user_id) {
                 console.error("Lỗi: Không tìm thấy ID trong session.");
+                hideLoading(); // ❌ Ẩn loading nếu lỗi
                 return;
             }
 
             const studentId = sessionData.user_id;
+
+            showLoading(); // 👉 Bắt đầu fetch điểm
 
             fetch(`/database/score-students.php?id=${studentId}`)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
                         console.error("Lỗi:", data.error);
+                        hideLoading();
                         return;
                     }
 
@@ -31,22 +37,19 @@ document.addEventListener("DOMContentLoaded", function () {
                     // Đổ danh sách học kỳ
                     semesterSelect.innerHTML = "";
                     let selectedSemesterId = null;
-                    const currentMonth = new Date().getMonth() + 1;  // Tháng hiện tại (1 đến 12)
+                    const currentMonth = new Date().getMonth() + 1;
 
-                    data.semesters.forEach((sem, index) => {
+                    data.semesters.forEach((sem) => {
                         let option = document.createElement("option");
                         option.value = sem.semester_id;
 
-                        // Cắt phần năm học và học kỳ từ tên học kỳ
-                        const semesterNameParts = sem.semester_name.split(',');  // Tách "Học kỳ 1, 2024 - 2025"
-                        const semesterTitle = semesterNameParts[0].trim();  // "Học kỳ 1"
-                        const academicYear = semesterNameParts[1].trim(); // "2024 - 2025"
+                        const semesterNameParts = sem.semester_name.split(',');
+                        const semesterTitle = semesterNameParts[0].trim();
+                        const academicYear = semesterNameParts[1].trim();
 
-                        // Tạo lựa chọn cho select
                         option.innerText = `${semesterTitle} - ${academicYear}`;
                         semesterSelect.appendChild(option);
 
-                        // Gán học kỳ mặc định dựa theo tháng hiện tại
                         if (!selectedSemesterId) {
                             if (currentMonth >= 8 && currentMonth <= 12 && semesterTitle.includes("Học kỳ 1")) {
                                 selectedSemesterId = sem.semester_id;
@@ -56,32 +59,33 @@ document.addEventListener("DOMContentLoaded", function () {
                         }
                     });
 
-                    // Nếu không xác định được học kỳ, chọn học kỳ đầu tiên
                     if (!selectedSemesterId && data.semesters.length > 0) {
                         selectedSemesterId = data.semesters[0].semester_id;
                     }
 
                     semesterSelect.value = selectedSemesterId;
+
+                    // 👉 Gọi fetchScores lần đầu
                     fetchScores(studentId, selectedSemesterId);
 
-                    // Lắng nghe thay đổi học kỳ
+                    // Thay đổi học kỳ
                     semesterSelect.addEventListener("change", function () {
                         fetchScores(studentId, this.value);
                     });
 
-                    // HIỂN THỊ HẠNH KIỂM TẤT CẢ KỲ
+                    // Hiển thị bảng tổng hạnh kiểm
                     const tongTableBody = document.getElementById("diemtongTableBody");
                     tongTableBody.innerHTML = "";
+
                     data.semesters.forEach(sem => {
                         const ev = data.evaluations?.[sem.semester_id] || {};
-                        const semesterNameParts = sem.semester_name.split(',');  // Tách "Học kỳ 1, 2024 - 2025"
-                        const semesterTitle = semesterNameParts[0].trim();  // "Học kỳ 1"
-                        const academicYear = semesterNameParts[1].trim(); // "2024 - 2025"
+                        const semesterNameParts = sem.semester_name.split(',');
+                        const semesterTitle = semesterNameParts[0].trim();
+                        const academicYear = semesterNameParts[1].trim();
 
-                        // Sửa lại bảng hiển thị
                         const row = `<tr>
-                            <td>${academicYear || "-"}</td> <!-- Hiển thị học kỳ -->
-                            <td>${semesterTitle || "-"}</td> <!-- Hiển thị năm học -->
+                            <td>${academicYear || "-"}</td>
+                            <td>${semesterTitle || "-"}</td>
                             <td>-</td>
                             <td>${ev.academic_performance || "-"}</td>
                             <td>${ev.behavior || "-"}</td>
@@ -89,10 +93,22 @@ document.addEventListener("DOMContentLoaded", function () {
                         </tr>`;
                         tongTableBody.insertAdjacentHTML("beforeend", row);
                     });
+
+                    hideLoading(); // ✅ Ẩn sau khi render dữ liệu đầu tiên
+                })
+                .catch(error => {
+                    console.error("Lỗi khi lấy điểm:", error);
+                    hideLoading();
                 });
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy session:", error);
+            hideLoading();
         });
 
     function fetchScores(studentId, semesterId) {
+        showLoading(); // 👉 Mỗi lần đổi học kỳ thì hiện loading
+
         let url = `/database/score-students.php?id=${studentId}&semester=${semesterId}`;
         fetch(url)
             .then(response => response.json())
@@ -117,6 +133,12 @@ document.addEventListener("DOMContentLoaded", function () {
                     </tr>`;
                     tbTableBody.insertAdjacentHTML("beforeend", rowHTML);
                 });
+
+                hideLoading(); // ✅ Ẩn khi đã render điểm
+            })
+            .catch(error => {
+                console.error("Lỗi khi lấy điểm theo học kỳ:", error);
+                hideLoading();
             });
     }
 });
