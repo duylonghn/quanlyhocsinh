@@ -31,6 +31,7 @@ $sql_create_table = "CREATE TABLE IF NOT EXISTS rollcall_$date (
     fullname VARCHAR(255) NOT NULL,
     time TIME DEFAULT NULL,  -- Chỉ có thể là NULL, không tự động nhập thời gian
     status ENUM('done', 'late', 'fail', 'licensed') DEFAULT 'fail',
+    note VARCHAR(20) DEFAULT NULL,
     FOREIGN KEY (student_id) REFERENCES hwdkopen_qlhs.students(id) ON DELETE CASCADE
 )";
 

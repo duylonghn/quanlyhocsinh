@@ -2,127 +2,85 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
 
-// Kết nối tới cơ sở dữ liệu qlhs (lấy lớp học của giáo viên)
-include(__DIR__ . '/../config/config-database.php');  // Kết nối với qlhs
+include(__DIR__ . '/../config/config-database.php');     // DB: qlhs
+include(__DIR__ . '/../config/config-rollcall.php');     // DB: diemdanh
 
-// Kết nối tới cơ sở dữ liệu diemdanh (lấy điểm danh của sinh viên)
-include(__DIR__ . '/../config/config-rollcall.php');  // Kết nối với diemdanh
-
-// Kiểm tra và lấy dữ liệu từ GET
+// Nhận teacher_id từ GET request
 $teacher_id = isset($_GET['teacher_id']) ? intval($_GET['teacher_id']) : 0;
-$date = isset($_GET['date']) ? $_GET['date'] : '';
 
-if ($teacher_id == 0 || empty($date)) {
-    echo json_encode(["error" => "Thiếu teacher_id hoặc date"]);
+if ($teacher_id === 0) {
+    echo json_encode(["error" => "Thiếu teacher_id"]);
     exit();
 }
 
-// Sử dụng trực tiếp giá trị date từ URL theo định dạng 'dd_mm_yy'
-$rollcall_table = 'rollcall_' . $date;  // Tạo tên bảng theo định dạng dd_mm_yy
+// 1. Lấy class_id của giáo viên từ bảng teachers
+$classStmt = $conn->prepare("SELECT class_id FROM teachers WHERE id = ?");
+$classStmt->bind_param("i", $teacher_id);
+$classStmt->execute();
+$classResult = $classStmt->get_result();
 
-// 1. Lấy lớp chủ nhiệm của giáo viên từ cơ sở dữ liệu qlhs
-$query = "SELECT c.id AS class_id, c.class_name
-          FROM teacher_class tc
-          JOIN classes c ON tc.class_id = c.id
-          WHERE tc.teacher_id = ?";
-$stmt = $conn->prepare($query);  // Sử dụng kết nối `conn` của qlhs
-$stmt->bind_param("i", $teacher_id);
-$stmt->execute();
-$result = $stmt->get_result();
-
-if ($result->num_rows == 0) {
-    echo json_encode(["error" => "Không tìm thấy lớp chủ nhiệm cho giáo viên"]);
+if ($classResult->num_rows === 0) {
+    echo json_encode(["error" => "Không tìm thấy lớp của giáo viên"]);
     exit();
 }
 
-$classData = [];
-while ($row = $result->fetch_assoc()) {
-    $classData[] = $row;
+$class_id = $classResult->fetch_assoc()['class_id'];
+
+// 2. Lấy danh sách student_id thuộc class_id đó từ bảng students
+$studentStmt = $conn->prepare("SELECT id FROM students WHERE class_id = ?");
+$studentStmt->bind_param("s", $class_id);  // class_id có thể là chuỗi, nên dùng "s" cho bind_param
+$studentStmt->execute();
+$studentResult = $studentStmt->get_result();
+
+// Kiểm tra nếu không có học sinh trong lớp
+if ($studentResult->num_rows === 0) {
+    echo json_encode(["error" => "Không có học sinh trong lớp"]);
+    exit();
 }
 
-// 2. Lấy trạng thái điểm danh cho từng sinh viên trong ngày từ cơ sở dữ liệu diemdanh
-$attendanceData = [];
-foreach ($classData as $class) {
-    $class_id = $class['class_id'];
-
-    // Truy vấn lấy danh sách sinh viên trong lớp từ cơ sở dữ liệu qlhs
-    $studentQuery = "SELECT id AS student_id, fullname
-                     FROM students
-                     WHERE class_id = ?";
-    $studentStmt = $conn->prepare($studentQuery);  // Sử dụng kết nối `conn` của qlhs để truy vấn bảng `students`
-    $studentStmt->bind_param("i", $class_id);
-    $studentStmt->execute();
-    $studentResult = $studentStmt->get_result();
-
-    $students = [];
-    while ($studentRow = $studentResult->fetch_assoc()) {
-        $students[] = [
-            'student_id' => $studentRow['student_id'],
-            'fullname' => $studentRow['fullname'],
-            'status' => 'Vắng', // Mặc định là vắng nếu không có trạng thái
-            'notification_status' => 'Chưa gửi'  // Mặc định là 'Chưa gửi'
-        ];
-    }
-
-    // Truy vấn lấy điểm danh và ghi chú (note) của sinh viên trong lớp cho ngày hiện tại từ bảng điểm danh trong diemdanh
-    $attendanceQuery = "SELECT student_id, status, note
-                        FROM $rollcall_table
-                        WHERE student_id = ?";
-    $attendanceStmt = $conn_rollcall->prepare($attendanceQuery);  // Sử dụng kết nối `conn_rollcall` để truy vấn bảng điểm danh
-    foreach ($students as &$student) {
-        // Lặp qua các sinh viên và lấy trạng thái điểm danh và ghi chú (note) của từng sinh viên
-        $attendanceStmt->bind_param("i", $student['student_id']);
-        $attendanceStmt->execute();
-        $attendanceResult = $attendanceStmt->get_result();
-
-        // Cập nhật trạng thái điểm danh và ghi chú cho sinh viên
-        if ($attendanceRow = $attendanceResult->fetch_assoc()) {
-            switch ($attendanceRow['status']) {
-                case 'fail':
-                    $student['status'] = 'Vắng';
-                    break;
-                case 'done':
-                    $student['status'] = 'Đúng giờ';
-                    break;
-                case 'late':
-                    $student['status'] = 'Muộn';
-                    break;
-                case 'licensed':
-                    $student['status'] = 'Có phép';
-                    break;
-                default:
-                    $student['status'] = 'Vắng'; // Trường hợp mặc định nếu không có trạng thái
-                    break;
-            }
-            
-            // Cập nhật ghi chú (note): Nếu có note là "sent" thì đánh dấu là "Đã gửi", nếu không có note (null) thì để "Chưa gửi"
-            if ($attendanceRow['note'] === 'sent') {
-                $student['notification_status'] = 'Đã gửi';
-            } else {
-                $student['notification_status'] = 'Chưa gửi'; // Nếu note là null hoặc không phải 'sent'
-            }
-        }
-    }
-
-    // Kiểm tra lớp học đã được thêm vào chưa, nếu chưa thì thêm
-    $classExists = false;
-    foreach ($attendanceData as $data) {
-        if ($data['class_id'] == $class_id) {
-            $classExists = true;
-            break;
-        }
-    }
-
-    // Thêm lớp học vào kết quả nếu chưa có
-    if (!$classExists) {
-        $attendanceData[] = [
-            'class_id' => $class_id,
-            'class_name' => $class['class_name'],
-            'students' => $students
-        ];
-    }
+// Lấy danh sách student_id
+$studentIds = [];
+while ($row = $studentResult->fetch_assoc()) {
+    $studentIds[] = $row['id'];
 }
 
-header('Content-Type: application/json; charset=utf-8');
-echo json_encode($attendanceData, JSON_UNESCAPED_UNICODE);
+// Bước 3: Truy vấn thông tin điểm danh từ bảng rollcall trong DB diemdanh
+$rollcall_table = 'rollcall_' . date('d_m_y'); // Lấy tên bảng rollcall theo ngày hiện tại
+$studentIdsList = implode(',', $studentIds); // Chuyển danh sách student_id thành chuỗi để truy vấn
+
+// Truy vấn lấy thông tin điểm danh
+$rollcallStmt = $conn_rollcall->prepare("SELECT student_id, fullname, status, note 
+                                          FROM $rollcall_table 
+                                          WHERE student_id IN ($studentIdsList)");
+
+$rollcallStmt->execute();
+$rollcallResult = $rollcallStmt->get_result();
+
+// Kiểm tra nếu có dữ liệu điểm danh
+if ($rollcallResult->num_rows === 0) {
+    echo json_encode(["error" => "Không có thông tin điểm danh cho học sinh"]);
+    exit();
+}
+
+// Lấy danh sách thông tin điểm danh của học sinh
+$students = [];
+while ($row = $rollcallResult->fetch_assoc()) {
+    $students[] = [
+        'student_id' => $row['student_id'],
+        'fullname' => $row['fullname'], 
+        'status' => match($row['status']) {
+            'done' => 'Đúng giờ',
+            'late' => 'Muộn',
+            'licensed' => 'Có phép',
+            default => 'Vắng'
+        },
+        'notification_status' => $row['note'] === 'sent' ? 'Đã gửi' : 'Chưa gửi'
+    ];
+}
+
+// Trả kết quả JSON với danh sách thông tin học sinh và điểm danh
+echo json_encode([
+    'class_id' => $class_id,
+    'students' => $students
+], JSON_UNESCAPED_UNICODE);
 ?>

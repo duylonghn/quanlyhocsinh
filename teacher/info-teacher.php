@@ -28,7 +28,7 @@ include __DIR__ . '/../header-teacher.php';
                     <span id="class"></span>
                 </div>
                 <div class="form-group teacher">
-                    <label for="course">Khóa:</label>
+                    <label for="course">Môn:</label>
                     <span id="course"></span>
                 </div>
             </div>

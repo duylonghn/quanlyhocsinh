@@ -27,6 +27,7 @@ void displayConfirm() {
   digitalWrite(BUZZER_PIN, HIGH);
   delay(50);
   digitalWrite(BUZZER_PIN, LOW);
+  showDefaultDisplay();
 }
 
 void displayFail() {
@@ -79,13 +80,12 @@ void showUID(String uid) {
   lcd.print(uid);
 }
 
-// Hàm hiển thị thông tin lên màn hình (thay đổi tùy thuộc vào loại màn hình bạn sử dụng)
 void displayOnScreen(String name, String id) {
   oled.clearDisplay();
   lcd.clear();
 
-  int lcdWidth = 16;                     // Số cột LCD, chỉnh lại 20 nếu bạn dùng LCD 20x4
-  unsigned long displayDuration = 5000;  // 5 giây
+  int lcdWidth = 16;
+  unsigned long displayDuration = 3000;
   unsigned long startTime = millis();
 
   int nameLength = name.length();
@@ -115,9 +115,6 @@ void displayOnScreen(String name, String id) {
     delay(300);  // Tốc độ chạy chữ
     lcd.clear();
   }
-
-  // Sau 5 giây thì trở về màn hình mặc định
-  showDefaultDisplay();
 }
 
 

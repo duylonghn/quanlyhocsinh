@@ -1,8 +1,6 @@
 <?php
-require 'vendor/autoload.php';
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->load();
-$token = getenv('TELEGRAM_BOT_TOKEN2');
+// TOKEN bot Telegram
+$token = "7712476536:AAFD61uh7_VjskEd9w2RtCsVQrVpbyG21y8";
 
 // ID user cần forward tin nhắn
 $forward_user_id = "7957387866";
@@ -61,10 +59,10 @@ if (isset($update["message"])) {
         $tinh_trang = getValue($text, '/⌛️.*?: (.+)/i');
         $gia = getValue($text, '/☘Giá[:： ]+(.+)/i');
         $dang_phong = getValue($text, '/☘Dạng phòng[:： ]+(.+)/i');
-        $thang = getValue($text, '/Thang[:： ]+(.+)/i');
         $noi_that = getValue($text, '/🏆Nội thất[:： ]+(.+)/i');
         $dich_vu = getValue($text, '/🏆Dịch vụ[:： ]+(.+)/is');
         $luu_y = getValue($text, '/⭐Lưu ý[:： ]+(.+)/is');
+        $thang = getValue($text, '/Thang[:： ]+(.+)/i'); // Thêm đoạn này để lấy thông tin thang máy
 
         // Thay thế viết tắt trong nội thất
         $noi_that = str_ireplace(["Dh", "Nl", "vskk"], ["Điều hòa", "Nóng lạnh", "Vệ sinh khép kín"], $noi_that);

@@ -1,28 +1,25 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Lấy teacher_id từ session
-    fetch("/action/get-session.php")
+    // Lấy class_id từ URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const classId = urlParams.get('class_id'); // Lấy class_id từ URL
+
+    if (!classId) {
+        alert("Không tìm thấy class_id trong URL!");
+        return;
+    }
+
+    fetch(`/database/get-students-list.php?class_id=${classId}`)
         .then(response => response.json())
-        .then(sessionData => {
-            if (!sessionData.user_id || isNaN(sessionData.user_id)) {
-                alert("Không tìm thấy ID giáo viên hoặc ID không hợp lệ!");
+        .then(data => {
+
+            if (!data.success) {
+                alert(data.message || "Lỗi không xác định từ API!");
                 return;
             }
-            const teacherId = sessionData.user_id;
 
-            fetch(`/database/get-students-list.php?teacher_id=${teacherId}`)
-                .then(response => response.json())
-                .then(data => {
-
-                    if (!data.success) {
-                        alert(data.message || "Lỗi không xác định từ API!");
-                        return;
-                    }
-
-                    populateTable(data.data);
-                })
-                .catch(error => console.error("Lỗi khi lấy danh sách lớp:", error));
+            populateTable(data.data);
         })
-        .catch(() => console.error("Lỗi khi lấy teacher_id từ session."));
+        .catch(error => console.error("Lỗi khi lấy danh sách học sinh:", error));
 });
 
 function populateTable(students) {

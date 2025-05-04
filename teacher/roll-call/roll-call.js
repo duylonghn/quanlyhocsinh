@@ -106,8 +106,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             })
             .then(data => {
                 console.log("📊 Attendance Data Received:", data);
-                if (data.length === 0 || !data[0].students) {  // Nếu không có sinh viên hoặc dữ liệu trống
-                    displayNoAttendanceData();  // Hiển thị dữ liệu "Không có điểm danh"
+                
+                // Kiểm tra dữ liệu trả về
+                if (!data || !data.students) {
+                    displayNoAttendanceData();  // Nếu không có sinh viên hoặc dữ liệu trống
                 } else {
                     displayAttendanceData(data);  // Hiển thị dữ liệu điểm danh nếu có
                 }
@@ -137,22 +139,25 @@ document.addEventListener("DOMContentLoaded", async function () {
         absentStudentsTable.innerHTML = ''; // Làm sạch bảng trước khi hiển thị dữ liệu mới
     
         // Hiển thị bảng Lớp chủ nhiệm
-        const homeroomClassData = data[0]; // Giả sử dữ liệu lớp chủ nhiệm nằm ở phần tử đầu tiên của mảng
+        const homeroomClassData = data; // Dữ liệu lớp chủ nhiệm
         if (homeroomClassData) {
             const totalStudents = homeroomClassData.students.length; // Đếm tổng số sinh viên
-            const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length; // Đếm sinh viên đã điểm danh (không phải 'Vắng')
-    
+            const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length; // Đếm sinh viên đã điểm danh, không phải 'Vắng'
+            
             const row = homeroomClassTable.querySelector('tr'); // Lấy dòng đầu tiên để cập nhật
             row.innerHTML = `
                 <td>${homeroomClassData.class_id}</td>
-                <td>${homeroomClassData.class_name}</td>
+                <td>${homeroomClassData.class_id}</td>
                 <td>${totalStudents}</td>
                 <td>${attendedCount} / ${totalStudents}</td>
             `;
         }
     
-        if (data[0] && data[0].students && data[0].students.length > 0) {
-            data[0].students.forEach(student => {
+        if (data && data.students && data.students.length > 0) {
+            data.students.forEach(student => {
+                // Kiểm tra tình trạng sinh viên, bỏ qua nếu là 'Đúng giờ'
+                if (student.status === 'Đúng giờ') return;
+    
                 const row = document.createElement("tr");
     
                 // Kiểm tra notification_status có giá trị 'Đã gửi' hoặc 'Chưa gửi'
@@ -161,7 +166,7 @@ document.addEventListener("DOMContentLoaded", async function () {
                 row.innerHTML = `
                     <td>${student.student_id}</td>
                     <td>${student.fullname}</td>
-                    <td>${data[0].class_name}</td>
+                    <td>${homeroomClassData.class_id}</td>
                     <td>${student.status}</td>
                     <td>${note}</td>
                 `;

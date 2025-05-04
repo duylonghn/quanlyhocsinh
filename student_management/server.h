@@ -58,8 +58,8 @@ String getStudentInfo(String uid, String timeNow) {
 
         // Xóa dấu trước khi hiển thị
         String name_no_accent = removeVietnameseTones(fullname);
-        displayConfirm();
         displayOnScreen(name_no_accent, id);
+        displayConfirm();
       }
     } else {
       displayFail();

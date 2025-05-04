@@ -75,46 +75,45 @@ document.addEventListener("DOMContentLoaded", function () {
                     current.setDate(weekStart.getDate() + i);
                     let key = current.toISOString().split('T')[0];
                     let records = data[key] || [];
-    
-                    if (statusCells[i]) statusCells[i].textContent = "";
-                    if (timeCells[i]) timeCells[i].textContent = "";
-    
+                
+                    if (statusCells[i]) {
+                        statusCells[i].textContent = "";
+                        statusCells[i].classList.remove("late-status", "on-time-status", "absent-status", "licensed-status");
+                    }
+                
+                    if (timeCells[i]) {
+                        timeCells[i].textContent = "";
+                    }
+                
                     if (records.length === 0) {
                         console.log(`📭 Không có dữ liệu cho ngày ${key}`);
                     }
-    
+                
                     records.forEach(record => {
                         const status = statusMap[record.status] || record.status;
                         const time = record.time ? record.time : "";
-    
-                        // Cập nhật trạng thái vào ô và tô màu theo trạng thái
+                
                         if (statusCells[i]) {
                             statusCells[i].textContent = status;
-
-                            // Thêm lớp CSS cho các trạng thái tương ứng
+                
                             if (status === "Muộn") {
                                 statusCells[i].classList.add("late-status");
-                                statusCells[i].classList.remove("on-time-status", "late-appear-status", "licensed-status");
                             } else if (status === "Đúng giờ") {
                                 statusCells[i].classList.add("on-time-status");
-                                statusCells[i].classList.remove("late-status", "late-appear-status", "licensed-status");
-                            } else if (status === "Muộn") {
-                                statusCells[i].classList.add("late-appear-status");
-                                statusCells[i].classList.remove("late-status", "on-time-status", "licensed-status");
+                            } else if (status === "Vắng") {
+                                statusCells[i].classList.add("absent-status");
                             } else if (status === "Có phép") {
                                 statusCells[i].classList.add("licensed-status");
-                                statusCells[i].classList.remove("late-status", "on-time-status", "late-appear-status");
                             }
                         }
-    
-                        // Cập nhật thời gian vào ô dưới cùng
+                
                         if (timeCells[i]) {
                             timeCells[i].textContent = time;
                         }
-
+                
                         console.log(`✅ ${key}: ${status} - ${time}`);
                     });
-                }
+                }                
             })
             .catch(err => {
                 console.error("❌ Lỗi khi lấy dữ liệu điểm danh:", err);

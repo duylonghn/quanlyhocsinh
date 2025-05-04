@@ -10,8 +10,7 @@ async function fetchClasses(teacherId) {
     try {
         console.log('Đang gọi API với teacher_id:', teacherId); // Log để kiểm tra khi gọi API
         const response = await fetch(`/database/get-class.php?teacher_id=${teacherId}`);
-        
-        // Kiểm tra nếu API trả về không phải là JSON hợp lệ
+
         if (!response.ok) {
             throw new Error('Không thể lấy dữ liệu lớp học');
         }
@@ -31,56 +30,70 @@ async function fetchClasses(teacherId) {
 }
 
 async function displayClasses() {
-    const teacherId = getTeacherIdFromURL(); // Lấy ID giáo viên từ URL
+    const teacherId = getTeacherIdFromURL();
     if (!teacherId) {
         console.error('Không tìm thấy teacher_id trong URL');
-        return; // Nếu không có teacher_id, dừng việc gọi API
+        return;
     }
 
     const data = await fetchClasses(teacherId);
     const { homeroom_class, subject_classes } = data;
 
-    // Kiểm tra dữ liệu lớp chủ nhiệm
-    console.log('Lớp chủ nhiệm:', homeroom_class);
+    // Hiển thị lớp chủ nhiệm
     const homeroomSection = document.querySelector('.chunhiem');
     const homeroomHTML = homeroom_class
         ? `<tr>
-            <td>${homeroom_class.id}</td> <!-- Sử dụng 'id' thay vì 'class_id' -->
+            <td>${homeroom_class.id}</td>
             <td>${homeroom_class.class_name}</td>
             <td>${homeroom_class.student_count}</td>
             <td><a href="/teacher/class/students-list/students-list.php?class_id=${homeroom_class.id}">Xem chi tiết</a></td>
-            <td><a href="/teacher/class/input-score/input-score.php?class_id=${homeroom_class.id}">Nhập điểm</a></td>
         </tr>`
         : `<tr><td colspan="5">Không có lớp chủ nhiệm</td></tr>`;
-    
-    // Thay đổi chỉ phần thân bảng (tbody) mà không thay thế toàn bộ bảng
     const homeroomTableBody = homeroomSection.querySelector('tbody');
     if (homeroomTableBody) {
         homeroomTableBody.innerHTML = homeroomHTML;
     }
 
-    // Kiểm tra dữ liệu lớp dạy môn
-    console.log('Lớp dạy môn:', subject_classes);
+    // Hiển thị lớp dạy môn
     const subjectSection = document.querySelector('.bomon');
     const subjectHTML = subject_classes.length > 0
         ? subject_classes.map(classInfo => {
             return `<tr>
-                <td>${classInfo.class_id}</td> <!-- Vẫn giữ 'class_id' ở đây -->
+                <td>${classInfo.class_id}</td>
                 <td>${classInfo.class_name}</td>
-                <td>${classInfo.student_count || '-'}</td> <!-- Hiển thị số học sinh trong lớp dạy môn -->
-                <td>${classInfo.subject_name || '-'}</td> <!-- Hiển thị môn nếu có -->
-                <td><a href="/teacher/class/students-list/students-list.php?class_id=${classInfo.class_id}">Xem chi tiết</a></td> <!-- Chỉnh lại 'class_id' -->
-                <td><a href="/teacher/class/input-score/input-score.php?class_id=${classInfo.class_id}">Nhập điểm</a></td> <!-- Chỉnh lại 'class_id' -->
+                <td>${classInfo.student_count || '-'}</td>
+                <td>${classInfo.subject_name || '-'}</td>
+                <td><a href="/teacher/class/students-list/students-list.php?class_id=${classInfo.class_id}">Xem chi tiết</a></td>
+                <td>
+                    <a href="#" 
+                       class="input-score-link" 
+                       data-class-id="${classInfo.class_id}" 
+                       data-subject-name="${encodeURIComponent(classInfo.subject_name || '')}">Nhập điểm</a>
+                </td>
             </tr>`;
         }).join('')
         : `<tr><td colspan="6">Không có lớp dạy môn</td></tr>`;
-    
-    // Thay đổi chỉ phần thân bảng (tbody) mà không thay thế toàn bộ bảng
     const subjectTableBody = subjectSection.querySelector('tbody');
     if (subjectTableBody) {
         subjectTableBody.innerHTML = subjectHTML;
     }
 }
 
-// Gọi hàm hiển thị lớp khi trang tải
+// Hàm lưu môn học và chuyển trang
+function saveSubjectAndRedirect(classId, subjectName) {
+    localStorage.setItem('subject_name', subjectName);
+    window.location.href = `/teacher/class/input-score/input-score.php?class_id=${classId}`;
+}
+
+// Lắng nghe click vào các nút "Nhập điểm"
+document.addEventListener("click", function (e) {
+    if (e.target.classList.contains("input-score-link")) {
+        e.preventDefault();
+        const classId = e.target.getAttribute("data-class-id");
+        const subjectName = decodeURIComponent(e.target.getAttribute("data-subject-name") || '');
+        saveSubjectAndRedirect(classId, subjectName);
+    }
+});
+
+// Gọi hàm khi trang tải
 document.addEventListener("DOMContentLoaded", displayClasses);

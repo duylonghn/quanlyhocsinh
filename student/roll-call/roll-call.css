@@ -54,8 +54,8 @@ h2 {
 }
 
 .late-status {
-    background-color: red;
-    color: white;
+    background-color: yellow;
+    color: black;
 }
 
 .on-time-status {
@@ -63,9 +63,9 @@ h2 {
     color: white;
 }
 
-.late-appear-status {
-    background-color: yellow;
-    color: black;
+.absent-status {
+    background-color: red;
+    color: white;
 }
 
 .licensed-status {

@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const tableBody = document.querySelector(".info-table tbody");
     const cancelButton = document.getElementById("cancel-info");
     const downloadBtn = document.querySelector(".download-btn"); // Nút tải file mẫu
+    const saveButton = document.getElementById("save-info");
 
     if (!fileInput || !fileUploadText || !tableBody) {
         console.error("Lỗi: Không tìm thấy một trong các phần tử HTML.");
@@ -87,6 +88,7 @@ document.addEventListener("DOMContentLoaded", function () {
             fileInput.value = ""; // Xóa file đã chọn
         }
     });
+
     // 📥 Tải file mẫu
     if (downloadBtn) {
         downloadBtn.addEventListener("click", function () {
@@ -98,4 +100,61 @@ document.addEventListener("DOMContentLoaded", function () {
             }
         });
     }
+
+    // 📝 Lưu dữ liệu lên server
+    saveButton.addEventListener("click", function () {
+        const rows = tableBody.querySelectorAll("tr");
+        if (rows.length === 0) {
+            alert("Không có dữ liệu để lưu!");
+            return;
+        }
+
+        const studentData = [];
+
+        rows.forEach(row => {
+            const cells = row.querySelectorAll("td");
+            const data = {
+                msv: cells[0]?.textContent.trim() || "",
+                fullname: cells[1]?.textContent.trim() || "",
+                sex: cells[2]?.textContent.trim() || "",
+                class_id: cells[3]?.textContent.trim() || "",
+                course: cells[4]?.textContent.trim() || "",
+                school: cells[5]?.textContent.trim() || "",
+                phone: cells[6]?.textContent.trim() || "",
+                email: cells[7]?.textContent.trim() || "",
+                cccd: cells[8]?.textContent.trim() || "",
+                nation: cells[9]?.textContent.trim() || "",
+                religion: cells[10]?.textContent.trim() || "",
+                birthplace: cells[11]?.textContent.trim() || "",
+                address: cells[12]?.textContent.trim() || "",
+                parent_name: cells[13]?.textContent.trim() || "",
+                parent_phone: cells[14]?.textContent.trim() || "",
+                relationship: cells[15]?.textContent.trim() || ""
+            };
+
+            studentData.push(data);
+        });
+
+        // Gửi dữ liệu lên server
+        fetch("/../../action/inputdata/students.php", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(studentData)
+        })
+        .then(response => response.json())
+        .then(result => {
+            if (result.success) {
+                alert("✅ Đã lưu thành công!");
+                // Có thể làm trống bảng hoặc reset nếu cần
+            } else {
+                alert("❌ Lỗi: " + (result.message || "Không xác định"));
+            }
+        })
+        .catch(error => {
+            console.error("Lỗi khi gửi dữ liệu:", error);
+            alert("❌ Gửi dữ liệu thất bại.");
+        });
+    });
 });

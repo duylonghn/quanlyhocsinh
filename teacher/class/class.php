@@ -17,7 +17,6 @@ include __DIR__ . '/../../header-teacher.php';
             <th>Tên lớp</th>
             <th>Sỹ số</th>
             <th>Danh sách lớp</th>
-            <th>Nhập điểm</th>
         </thead>
         <tr>
             <td><?= $homeroom_class['class_id'] ?? '-' ?></td>
@@ -26,13 +25,6 @@ include __DIR__ . '/../../header-teacher.php';
             <td>
                 <?php if ($homeroom_class): ?>
                     <a href="/teacher/class/students-list/students-list.php?class_id=<?= $homeroom_class['id'] ?>">Xem chi tiết</a>
-                <?php else: ?>
-                    -
-                <?php endif; ?>
-            </td>
-            <td>
-                <?php if ($homeroom_class): ?>
-                    <a href="/teacher/class/input-score/input-score.php?class_id=<?= $homeroom_class['id'] ?>">Nhập điểm</a>
                 <?php else: ?>
                     -
                 <?php endif; ?>

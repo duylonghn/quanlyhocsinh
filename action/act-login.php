@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             } elseif ($user['role'] == 'teacher') {
                 header("Location: /../../teacher/info-teacher.php?id=" . urlencode($user['id']));
             } elseif ($user['role'] == 'admin') {
-                header("Location: /../../admin/admin.php?id=" . urlencode($user['id']));
+                header("Location: /../../admin/update/update.php?id=" . urlencode($user['id']));
             } else {
                 header("Location: /login/login.php?error=incorrect_username_or_password");
             }

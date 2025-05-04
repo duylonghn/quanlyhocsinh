@@ -95,8 +95,7 @@ span {
     background-color: #aec2fe;
 }
 .table-content tbody tr:hover {
-    background-color: #4c43c6;
-    color: white;
+    background-color: #b5b1ed;
 }
 /* Responsive Design for Mobile */
 @media screen and (max-width: 480px) {
