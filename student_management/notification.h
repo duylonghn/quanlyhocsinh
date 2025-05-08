@@ -2,7 +2,9 @@
 #include <ArduinoJson.h>
 #include "GUI.h"
 // Còi
-#define BUZZER_PIN 23
+#define BUZZER_PIN 33
+float sinVal;
+int toneVal;
 
 // Biến để theo dõi thời gian và frame cho ảnh động
 unsigned long lastFrameTime = 0;
@@ -10,34 +12,28 @@ unsigned long lastFrameTimeFail = 0;
 unsigned long lastFrameTimeLoader = 0;
 unsigned long frameDelay = 100;  // Thời gian thay đổi frame (ms)
 
+void buzz(int x) {
+  sinVal = (sin(x * (3.1412 / 180)));
+  toneVal = 3500 + (int(sinVal * 1000));
+  tone(BUZZER_PIN, toneVal);
+}
+
 void displayConfirm() {
   oled.clearDisplay();
-
-  digitalWrite(BUZZER_PIN, HIGH);
-  delay(50);
-  digitalWrite(BUZZER_PIN, LOW);
-  delay(100);
-
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     oled.drawBitmap(32, 0, confirm[i], FRAME_WIDTH, FRAME_HEIGHT, 1);
     oled.display();
     delay(100);
   }
-  digitalWrite(BUZZER_PIN, HIGH);
-  delay(50);
-  digitalWrite(BUZZER_PIN, LOW);
   showDefaultDisplay();
 }
 
 void displayFail() {
-  oled.clearDisplay();
-  for (int i = 0; i < 3; i++) {
-    digitalWrite(BUZZER_PIN, HIGH);
-    delay(100);
-    digitalWrite(BUZZER_PIN, LOW);
-    delay(100);
-  }
+  buzz(140);
+  delay(1000);
+  noTone(BUZZER_PIN); // Tắt còi
+
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     oled.drawBitmap(32, 0, fail[i], FRAME_WIDTH, FRAME_HEIGHT, 1);
@@ -47,10 +43,10 @@ void displayFail() {
   showDefaultDisplay();
 }
 
+
 void displayLoader() {
   oled.clearDisplay();
   lcd.clear();
-
   for (int i = 0; i < FRAME_COUNT; i++) {
     oled.clearDisplay();
     lcd.setCursor(0, 0);
@@ -81,9 +77,12 @@ void showUID(String uid) {
 }
 
 void displayOnScreen(String name, String id) {
-  oled.clearDisplay();
   lcd.clear();
-
+  buzz(150);
+  delay(200);
+  buzz(180);
+  delay(200);
+  noTone(BUZZER_PIN); // Tắt còi
   int lcdWidth = 16;
   unsigned long displayDuration = 3000;
   unsigned long startTime = millis();

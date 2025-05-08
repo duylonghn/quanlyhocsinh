@@ -87,7 +87,7 @@ async function displayClasses() {
 
 // Hàm lưu môn học và chuyển trang
 function saveSubjectAndRedirect(classId, subjectName) {
-    localStorage.setItem('subject_name', subjectName);
+    sessionStorage.setItem('subject_name', subjectName);
     window.location.href = `/teacher/class/input-score/input-score.php?class_id=${classId}`;
 }
 

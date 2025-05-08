@@ -149,3 +149,11 @@ td:empty::before {
     color: gray;
     opacity: 0.5;
 }
+
+select {
+    border: solid 1px rgb(209, 209, 209);
+    width: 100px;
+    height: 22px;
+    text-align: center;
+    border-radius: 10px;
+}

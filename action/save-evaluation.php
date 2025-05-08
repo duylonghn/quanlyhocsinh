@@ -21,7 +21,7 @@ foreach ($input['data'] as $item) {
     $student_id = $item['student_id'] ?? null;
     $semester_id = $item['semester_id'] ?? null;
     $behavior = $item['behavior'] ?? null;
-    $academic = $item['academic'] ?? null;
+    $academic = $item['academic_performance'] ?? null; // Sửa tên biến cho phù hợp với JS
     $rating = $item['rating'] ?? null;
 
     if (!$student_id || !$semester_id) {
@@ -31,7 +31,7 @@ foreach ($input['data'] as $item) {
 
     // Kiểm tra xem có bản ghi nào tồn tại chưa
     $stmt = $conn->prepare("SELECT 1 FROM evaluations WHERE student_id = ? AND semester_id = ?");
-    $stmt->bind_param("is", $student_id, $semester_id);
+    $stmt->bind_param("is", $student_id, $semester_id); // Đảm bảo tham số kiểu phù hợp
     $stmt->execute();
     $stmt->store_result();
 
@@ -46,7 +46,7 @@ foreach ($input['data'] as $item) {
         if ($stmt_update->execute()) {
             $successCount++;
         } else {
-            $errors[] = "Không thể cập nhật cho HS ID: $student_id";
+            $errors[] = "Không thể cập nhật cho HS ID: $student_id, lỗi: " . $stmt_update->error;
         }
         $stmt_update->close();
     } else {
@@ -59,7 +59,7 @@ foreach ($input['data'] as $item) {
         if ($stmt_insert->execute()) {
             $successCount++;
         } else {
-            $errors[] = "Không thể thêm đánh giá cho HS ID: $student_id";
+            $errors[] = "Không thể thêm đánh giá cho HS ID: $student_id, lỗi: " . $stmt_insert->error;
         }
         $stmt_insert->close();
     }

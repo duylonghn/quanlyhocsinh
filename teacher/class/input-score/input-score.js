@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const saveButton = document.querySelector(".send-score");
     const cancelButton = document.querySelector(".cancel");
 
-    const subjectName = localStorage.getItem('subject_name') || '';
+    const subjectName = sessionStorage.getItem('subject_name') || '';
     const urlParams = new URLSearchParams(window.location.search);
     const classId = urlParams.get('class_id');
 

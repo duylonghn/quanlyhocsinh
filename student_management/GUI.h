@@ -74,17 +74,27 @@ void displayConnectedNTP() {
   oled.clearDisplay();
 };
 
-void connectWifi(const char* ssid, const char* pass) {
+bool connectWifi(const char* ssid, const char* pass) {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, pass);
   Serial.print("\nConnecting to ");
   Serial.println(ssid);
+
   unsigned long startAttemptTime = millis();
-  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000)
-  {
+  while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
     displayConnectWifi(ssid); // Hiển thị thông tin trên oled
+    delay(500); // thêm delay để tránh vòng lặp quá nhanh
   }
-};
+
+  if (WiFi.status() == WL_CONNECTED) {
+    Serial.println("Connected to WiFi!");
+    return true;
+  } else {
+    Serial.println("Failed to connect to WiFi.");
+    return false;
+  }
+}
+
 
 void connectedWifi(const char*ssid) {
   Serial.println("Connected to " + String(ssid));
@@ -108,6 +118,17 @@ void displayConnectingNTP() {
   dotCount = (dotCount + 1) % 3;
 };
 
+void displayWifiAP(const char* ssidAP) {
+  oled.clearDisplay();
+  oled.setTextColor(WHITE);
+  drawBitmap(DisableWifi, 0, 0, 128, 12);
+  oled.setCursor(0,14);
+  oled.print("Can't connect to wifi");
+  oled.print("\n\nStarting AP mode");
+  oled.print("\n\nSSID: ");
+  oled.print(ssidAP);
+  oled.display();
+};
 int timezone = 7 * 3600;
 int dst = 0;
 

@@ -14,8 +14,8 @@ include __DIR__ . '/../../../header-teacher.php';
                         <tr style="font-weight:bold">
                             <th>MHS</th>
                             <th>Họ tên</th>
-                            <th>Học lực</th>
                             <th>Hạnh kiểm</th>
+                            <th>Học lực</th>
                             <th>Xếp loại</th>
 
                         </tr>

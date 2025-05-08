@@ -6,8 +6,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     const homeroomClassTable = document.querySelector(".diemdanh table tbody");
     const absentStudentsTable = document.querySelector(".chuadiemdanh tbody");
     let currentDate = new Date();
+    let selectedDate = currentDate;  // ✅ Biến mới để lưu ngày được chọn
 
-    // ✅ Hàm lấy user_id từ session
     async function getUserIdFromSession() {
         try {
             const response = await fetch("/action/get-session.php");
@@ -33,9 +33,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     generateCalendar(currentDate);
-    fetchAttendanceData(currentDate, userId); // Truyền ngày đã được chỉnh sửa
+    fetchAttendanceData(currentDate, userId);
 
-    // Hàm generateCalendar để truyền ngày theo định dạng dd_mm_yy
     function generateCalendar(date) {
         console.log("📆 Generating calendar for:", date.toISOString().split('T')[0]);
         monthBody.innerHTML = "";
@@ -51,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             for (let i = 0; i < 7; i++) {
                 let cell = document.createElement("td");
                 cell.textContent = day.getDate();
-                cell.dataset.date = formatDateToURL(day);  // Chuyển ngày thành định dạng dd_mm_yy
+                cell.dataset.date = formatDateToURL(day);
                 cell.classList.add("calendar-day");
 
                 if (day.getMonth() !== date.getMonth()) {
@@ -62,15 +61,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 }
 
                 cell.addEventListener("click", function () {
-                    console.log("📅 Clicked date:", this.dataset.date);
                     document.querySelectorAll(".selected-day").forEach(el => el.classList.remove("selected-day"));
                     this.classList.add("selected-day");
 
-                    // Debugging the selected date
-                    console.log("Selected Date (Dataset):", this.dataset.date);
-
                     const parsedDate = parseDateFromURL(this.dataset.date);
-                    fetchAttendanceData(parsedDate, userId); // Gửi ngày đã chọn
+                    selectedDate = parsedDate;  // ✅ Cập nhật ngày được chọn
+                    fetchAttendanceData(parsedDate, userId);
                 });
 
                 row.appendChild(cell);
@@ -80,55 +76,48 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     }
 
-    // Chuyển đổi ngày sang định dạng dd_mm_yy
     function formatDateToURL(date) {
-        let day = String(date.getDate()).padStart(2, '0');  // Đảm bảo ngày có 2 chữ số
-        let month = String(date.getMonth() + 1).padStart(2, '0');  // Đảm bảo tháng có 2 chữ số
-        let year = String(date.getFullYear()).slice(-2);  // Lấy 2 số cuối của năm
+        let day = String(date.getDate()).padStart(2, '0');
+        let month = String(date.getMonth() + 1).padStart(2, '0');
+        let year = String(date.getFullYear()).slice(-2);
         return `${day}_${month}_${year}`;
     }
 
-    // Chuyển đổi định dạng dd_mm_yy thành yyyy-mm-dd cho đối tượng Date
     function parseDateFromURL(dateString) {
         const [day, month, year] = dateString.split('_');
         return new Date(`20${year}-${month}-${day}`);
     }
 
     function fetchAttendanceData(date, teacherId) {
-        const formattedDate = formatDateToURL(date);  // Định dạng ngày
+        const formattedDate = formatDateToURL(date);
         const apiUrl = `/database/rollcall-teacher.php?teacher_id=${teacherId}&date=${formattedDate}`;
         console.log("🔄 Fetching attendance data from:", apiUrl);
 
-        // Hiển thị loading khi đang lấy dữ liệu
         showLoading();
 
         fetch(apiUrl)
             .then(response => {
-                if (!response.ok) throw new Error("Lỗi khi gọi API!");  // Nếu có lỗi khi gọi API
+                if (!response.ok) throw new Error("Lỗi khi gọi API!");
                 return response.json();
             })
             .then(data => {
-                hideLoading(); // Ẩn loading khi nhận dữ liệu
-
+                hideLoading();
                 console.log("📊 Attendance Data Received:", data);
-                
-                // Kiểm tra dữ liệu trả về
                 if (!data || !data.students) {
-                    displayNoAttendanceData();  // Nếu không có sinh viên hoặc dữ liệu trống
+                    displayNoAttendanceData();
                 } else {
-                    displayAttendanceData(data);  // Hiển thị dữ liệu điểm danh nếu có
+                    displayAttendanceData(data);
                 }
             })
             .catch(error => {
-                hideLoading(); // Ẩn loading khi gặp lỗi
+                hideLoading();
                 console.error("❌ Fetch error:", error);
-                displayNoAttendanceData();  // Hiển thị dữ liệu mặc định khi có lỗi
+                displayNoAttendanceData();
             });
     }
-    
+
     function displayNoAttendanceData() {
-        // Hiển thị bảng lớp chủ nhiệm với các giá trị mặc định (0)
-        homeroomClassTable.innerHTML = ` 
+        homeroomClassTable.innerHTML = `
             <tr>
                 <td>-</td>
                 <td>-</td>
@@ -136,51 +125,94 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <td>0 / 0</td>
             </tr>
         `;
-        
-        // Làm sạch bảng sinh viên vắng mặt
         absentStudentsTable.innerHTML = '<tr><td colspan="5">Không có thông tin điểm danh (Hoặc là ngày nghỉ)</td></tr>';
     }
 
     function displayAttendanceData(data) {
-        absentStudentsTable.innerHTML = ''; // Làm sạch bảng trước khi hiển thị dữ liệu mới
-    
-        // Hiển thị bảng Lớp chủ nhiệm
-        const homeroomClassData = data; // Dữ liệu lớp chủ nhiệm
+        absentStudentsTable.innerHTML = '';
+        const homeroomClassData = data;
+
         if (homeroomClassData) {
-            const totalStudents = homeroomClassData.students.length; // Đếm tổng số sinh viên
-            const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length; // Đếm sinh viên đã điểm danh, không phải 'Vắng'
-            
-            const row = homeroomClassTable.querySelector('tr'); // Lấy dòng đầu tiên để cập nhật
+            const totalStudents = homeroomClassData.students.length;
+            const attendedCount = homeroomClassData.students.filter(student => student.status !== 'Vắng').length;
+
+            const row = homeroomClassTable.querySelector('tr') || document.createElement('tr');
             row.innerHTML = `
                 <td>${homeroomClassData.class_id}</td>
                 <td>${homeroomClassData.class_id}</td>
                 <td>${totalStudents}</td>
                 <td>${attendedCount} / ${totalStudents}</td>
             `;
+            if (!homeroomClassTable.contains(row)) homeroomClassTable.appendChild(row);
         }
-    
+
         if (data && data.students && data.students.length > 0) {
+            const formattedDate = formatDateToURL(selectedDate);  // ✅ Sử dụng ngày đã chọn
+
             data.students.forEach(student => {
-                // Kiểm tra tình trạng sinh viên, bỏ qua nếu là 'Đúng giờ'
                 if (student.status === 'Đúng giờ') return;
-    
+
                 const row = document.createElement("tr");
-    
-                // Kiểm tra notification_status có giá trị 'Đã gửi' hoặc 'Chưa gửi'
+                const statusOptions = ['Vắng', 'Có phép', 'Đúng giờ', 'Muộn'];
+                let optionsHtml = statusOptions.map(option => `
+                    <option value="${option}" ${student.status === option ? 'selected' : ''}>${option}</option>
+                `).join('');
+
                 const note = (student.notification_status === 'Đã gửi') ? 'Đã gửi' : 'Chưa gửi';
-    
+
                 row.innerHTML = `
                     <td>${student.student_id}</td>
                     <td>${student.fullname}</td>
                     <td>${homeroomClassData.class_id}</td>
-                    <td>${student.status}</td>
+                    <td>
+                        <select class="status-select" data-student-id="${student.student_id}">
+                            ${optionsHtml}
+                        </select>
+                    </td>
                     <td>${note}</td>
                 `;
+
                 absentStudentsTable.appendChild(row);
+
+                row.querySelector(".status-select").addEventListener("change", function () {
+                    const newStatus = this.value;
+                    const studentId = this.dataset.studentId;
+                    updateStudentStatus(studentId, newStatus, formattedDate);
+                });
             });
         } else {
             absentStudentsTable.innerHTML = '<tr><td colspan="5">✅ Tất cả sinh viên đã điểm danh</td></tr>';
         }
+    }
+
+    function updateStudentStatus(studentId, status, date) {
+        const payload = {
+            student_id: studentId,
+            status: status,
+            date: date
+        };
+
+        console.log("🛠️ Dữ liệu gửi cập nhật:", payload);
+
+        fetch('/action/update-status.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        })
+        .then(response => {
+            if (!response.ok) throw new Error("Cập nhật thất bại!");
+            return response.json();
+        })
+        .then(result => {
+            console.log("✅ Trạng thái cập nhật:", result);
+            alert("✅ Cập nhật thành công!");
+        })
+        .catch(error => {
+            console.error("❌ Lỗi cập nhật trạng thái:", error);
+            alert("❌ Lỗi khi cập nhật trạng thái!");
+        });
     }
 
     window.prevMonth = function () {

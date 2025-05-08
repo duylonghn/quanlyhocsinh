@@ -23,24 +23,36 @@ document.addEventListener("DOMContentLoaded", function () {
         semester_id = `2_${(year - 1).toString().slice(-2)}_${year.toString().slice(-2)}`;
     }
 
-    // Hiển thị loading khi lấy dữ liệu
     showLoading();
 
-    // Lấy danh sách học sinh
     fetch(`/database/get-students-list.php?class_id=${classId}`)
         .then(response => response.json())
         .then(studentRes => {
-            hideLoading(); // Ẩn loading khi lấy dữ liệu thành công
+            hideLoading();
 
             if (!studentRes.success) {
                 alert(studentRes.message || "Lỗi khi lấy danh sách học sinh!");
                 return;
             }
 
-            populateEvaluationTable(studentRes.data);
+            fetch(`/action/get-evaluation.php?class_id=${classId}&semester_id=${semester_id}`)
+                .then(evaluationResponse => evaluationResponse.json())
+                .then(evaluationRes => {
+                    if (!evaluationRes.success) {
+                        alert(evaluationRes.message || "Lỗi khi lấy dữ liệu đánh giá!");
+                        return;
+                    }
+
+                    populateEvaluationTable(studentRes.data, evaluationRes.data);
+                })
+                .catch(error => {
+                    hideLoading();
+                    console.error("Lỗi khi gọi API đánh giá:", error);
+                    alert("Không thể lấy dữ liệu đánh giá!");
+                });
         })
         .catch(error => {
-            hideLoading(); // Ẩn loading khi gặp lỗi
+            hideLoading();
             console.error("Lỗi khi gọi API học sinh:", error);
             alert("Không thể lấy danh sách học sinh!");
         });
@@ -61,21 +73,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
             rows.forEach(row => {
                 const studentId = row.getAttribute('data-student-id');
-                const behavior = row.querySelector(`select[name="behavior_${studentId}"]`).value;
-                const academic = row.querySelector(`select[name="academic_${studentId}"]`).value;
-                const overall = row.querySelector(`select[name="ranking_${studentId}"]`).value;
+                const behavior = row.querySelector(`select[name="behavior_${studentId}"]`)?.value || "";
+                const academic = row.querySelector(`select[name="academic_performance_${studentId}"]`)?.value || "";
+                const overall = row.querySelector(`select[name="rating_${studentId}"]`)?.value || "";
 
                 payload.push({
                     student_id: studentId,
                     class_id: classId,
                     semester_id: semester_id,
                     behavior: behavior,
-                    academic: academic,
-                    ranking: overall
+                    academic_performance: academic,
+                    rating: overall
                 });
             });
 
-            // Hiển thị loading khi lưu dữ liệu
             showLoading();
 
             fetch("/../../../action/save-evaluation.php", {
@@ -87,7 +98,7 @@ document.addEventListener("DOMContentLoaded", function () {
             })
                 .then(res => res.json())
                 .then(result => {
-                    hideLoading(); // Ẩn loading khi lưu dữ liệu xong
+                    hideLoading();
 
                     if (result.success) {
                         alert("Lưu đánh giá thành công!");
@@ -96,7 +107,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
                 })
                 .catch(err => {
-                    hideLoading(); // Ẩn loading khi gặp lỗi
+                    hideLoading();
                     console.error("Lỗi khi gửi đánh giá:", err);
                     alert("Lỗi khi gửi dữ liệu lên server!");
                 });
@@ -104,7 +115,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 });
 
-function populateEvaluationTable(students) {
+function populateEvaluationTable(students, evaluations) {
     const tableBody = document.querySelector(".table-content tbody");
     if (!tableBody) return;
 
@@ -116,6 +127,8 @@ function populateEvaluationTable(students) {
     }
 
     students.forEach(student => {
+        const evaluation = evaluations.find(e => e.student_id === student.id) || {};
+
         const row = document.createElement("tr");
         row.setAttribute("data-student-id", student.id);
 
@@ -125,28 +138,28 @@ function populateEvaluationTable(students) {
             <td>
                 <select name="behavior_${student.id}">
                     <option value="">--Chọn--</option>
-                    <option value="Tốt">Tốt</option>
-                    <option value="Khá">Khá</option>
-                    <option value="Trung bình">Trung bình</option>
-                    <option value="Yếu">Yếu</option>
+                    <option value="Tốt" ${evaluation.behavior?.trim() === "Tốt" ? "selected" : ""}>Tốt</option>
+                    <option value="Khá" ${evaluation.behavior?.trim() === "Khá" ? "selected" : ""}>Khá</option>
+                    <option value="Trung bình" ${evaluation.behavior?.trim() === "Trung bình" ? "selected" : ""}>Trung bình</option>
+                    <option value="Yếu" ${evaluation.behavior?.trim() === "Yếu" ? "selected" : ""}>Yếu</option>
                 </select>
             </td>
             <td>
-                <select name="academic_${student.id}">
+                <select name="academic_performance_${student.id}">
                     <option value="">--Chọn--</option>
-                    <option value="Giỏi">Giỏi</option>
-                    <option value="Khá">Khá</option>
-                    <option value="Trung bình">Trung bình</option>
-                    <option value="Yếu">Yếu</option>
-                    <option value="Kém">Kém</option>
+                    <option value="Giỏi" ${evaluation.academic_performance?.trim() === "Giỏi" ? "selected" : ""}>Giỏi</option>
+                    <option value="Khá" ${evaluation.academic_performance?.trim() === "Khá" ? "selected" : ""}>Khá</option>
+                    <option value="Trung bình" ${evaluation.academic_performance?.trim() === "Trung bình" ? "selected" : ""}>Trung bình</option>
+                    <option value="Yếu" ${evaluation.academic_performance?.trim() === "Yếu" ? "selected" : ""}>Yếu</option>
+                    <option value="Kém" ${evaluation.academic_performance?.trim() === "Kém" ? "selected" : ""}>Kém</option>
                 </select>
             </td>
             <td>
-                <select name="ranking_${student.id}">
+                <select name="rating_${student.id}">
                     <option value="">--Chọn--</option>
-                    <option value="Hoàn thành tốt">Hoàn thành tốt</option>
-                    <option value="Hoàn thành">Hoàn thành</option>
-                    <option value="Chưa hoàn thành">Chưa hoàn thành</option>
+                    <option value="Giỏi" ${evaluation.rating?.trim() === "Giỏi" ? "selected" : ""}>Giỏi</option>
+                    <option value="Khá" ${evaluation.rating?.trim() === "Khá" ? "selected" : ""}>Khá</option>
+                    <option value="Yếu" ${evaluation.rating?.trim() === "Yếu" ? "selected" : ""}>Yếu</option>
                 </select>
             </td>
         `;
